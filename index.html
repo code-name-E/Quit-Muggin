@@ -1,0 +1,2544 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUIT MUGGIN' | Bold Drinkware & Accessories</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4.4.1/dist/email.min.js"></script>
+    <script>
+        // Colors now read from CSS variables so the Halloween theme can swap them.
+        // The default (original) values are defined in :root below and match the original hex colors exactly.
+        const rgbVar = (name) => `rgb(var(--${name}) / <alpha-value>)`;
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        black: rgbVar('c-black'),
+                        zinc: {
+                            50: rgbVar('z-50'),
+                            100: rgbVar('z-100'),
+                            200: rgbVar('z-200'),
+                            300: rgbVar('z-300'),
+                            400: rgbVar('z-400'),
+                            500: rgbVar('z-500'),
+                            600: rgbVar('z-600'),
+                            700: rgbVar('z-700'),
+                            800: rgbVar('z-800'),
+                            900: rgbVar('z-900'),
+                            950: rgbVar('z-950')
+                        },
+                        brand: {
+                            black: rgbVar('b-black'),
+                            dark: rgbVar('b-dark'),
+                            card: rgbVar('b-card'),
+                            border: rgbVar('b-border'),
+                            accent: rgbVar('b-accent'), // warm amber coffee tone
+                            accentHover: rgbVar('b-accent-hover'),
+                            cream: rgbVar('b-cream'),
+                            muted: rgbVar('b-muted')
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* ORIGINAL THEME (default) */
+        :root {
+            --c-black: 0 0 0;
+            --z-50: 250 250 250;
+            --z-100: 244 244 245;
+            --z-200: 228 228 231;
+            --z-300: 212 212 216;
+            --z-400: 161 161 170;
+            --z-500: 113 113 122;
+            --z-600: 82 82 91;
+            --z-700: 63 63 70;
+            --z-800: 39 39 42;
+            --z-900: 24 24 27;
+            --z-950: 9 9 11;
+            --b-black: 15 15 15;
+            --b-dark: 24 24 27;
+            --b-card: 36 36 39;
+            --b-border: 63 63 70;
+            --b-accent: 217 119 6;
+            --b-accent-hover: 180 83 9;
+            --b-cream: 253 251 247;
+            --b-muted: 161 161 170;
+        }
+
+        /* HALLOWEEN THEME (only applies when the toggle is on) */
+        html.halloween {
+            --c-black: 10 4 16;
+            --z-50: 250 245 255;
+            --z-100: 243 232 255;
+            --z-200: 233 213 255;
+            --z-300: 216 190 242;
+            --z-400: 186 160 216;
+            --z-500: 140 112 176;
+            --z-600: 100 72 140;
+            --z-700: 74 44 107;
+            --z-800: 45 26 66;
+            --z-900: 30 16 46;
+            --z-950: 15 7 24;
+            --b-black: 17 8 26;
+            --b-dark: 26 14 40;
+            --b-card: 38 21 58;
+            --b-border: 82 48 120;
+            --b-accent: 255 117 24;
+            --b-accent-hover: 226 93 8;
+            --b-cream: 255 248 238;
+            --b-muted: 186 160 216;
+        }
+        html.halloween body {
+            background-color: #11081a;
+            background-image: radial-gradient(ellipse at top, rgba(124, 58, 237, 0.22), transparent 60%);
+            background-attachment: fixed;
+        }
+        html.halloween .countdown-box {
+            background: linear-gradient(135deg, rgba(255, 117, 24, 0.18), rgba(88, 28, 135, 0.45));
+            border: 1px solid rgba(255, 117, 24, 0.4);
+        }
+        html.halloween .product-card:hover {
+            box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.7), 0 0 18px rgba(255, 117, 24, 0.28), 0 0 30px rgba(124, 58, 237, 0.2);
+        }
+        html.halloween [class*="radial-gradient"] {
+            background-image: radial-gradient(#ff7518 1px, transparent 1px) !important;
+        }
+        html.halloween .fa-face-frown::before {
+            content: "\f6e2"; /* ghost icon in place of the frowny face */
+        }
+        html.halloween ::-webkit-scrollbar-track { background: #11081a; }
+        html.halloween ::-webkit-scrollbar-thumb { background: #3b1f5c; }
+        html.halloween ::-webkit-scrollbar-thumb:hover { background: #ff7518; }
+
+        /* THANKSGIVING THEME (only applies when its toggle is on) */
+        html.thanksgiving {
+            --c-black: 18 10 6;
+            --z-50: 255 248 240;
+            --z-100: 250 237 220;
+            --z-200: 240 218 190;
+            --z-300: 222 190 150;
+            --z-400: 190 156 118;
+            --z-500: 150 116 84;
+            --z-600: 110 80 56;
+            --z-700: 82 56 38;
+            --z-800: 52 34 24;
+            --z-900: 36 22 16;
+            --z-950: 20 12 8;
+            --b-black: 24 14 9;
+            --b-dark: 36 22 14;
+            --b-card: 52 32 21;
+            --b-border: 96 62 40;
+            --b-accent: 214 110 30;
+            --b-accent-hover: 184 86 16;
+            --b-cream: 255 247 235;
+            --b-muted: 200 165 125;
+        }
+        html.thanksgiving body {
+            background-color: #1a0e08;
+            background-image: radial-gradient(ellipse at top, rgba(168, 70, 24, 0.24), transparent 60%);
+            background-attachment: fixed;
+        }
+        html.thanksgiving .countdown-box {
+            background: linear-gradient(135deg, rgba(214, 110, 30, 0.18), rgba(120, 40, 20, 0.45));
+            border: 1px solid rgba(214, 110, 30, 0.4);
+        }
+        html.thanksgiving .product-card:hover {
+            box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.7), 0 0 18px rgba(214, 110, 30, 0.28), 0 0 30px rgba(180, 120, 30, 0.18);
+        }
+        html.thanksgiving [class*="radial-gradient"] {
+            background-image: radial-gradient(#d66e1e 1px, transparent 1px) !important;
+        }
+        html.thanksgiving .fa-face-frown::before {
+            content: "\f06c"; /* autumn leaf icon in place of the frowny face */
+        }
+        html.thanksgiving .fa-bell::before {
+            /* fork silhouette in place of the bouncing bell (keeps the icon's accent color) */
+            content: "";
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            background-color: currentColor;
+            -webkit-mask: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20x='16'%20y='3'%20width='5'%20height='25'%20rx='2.5'/%3E%3Crect%20x='29.5'%20y='3'%20width='5'%20height='25'%20rx='2.5'/%3E%3Crect%20x='43'%20y='3'%20width='5'%20height='25'%20rx='2.5'/%3E%3Cpath%20d='M16%2020H48V25C48%2033%2041%2038%2035%2039H29C23%2038%2016%2033%2016%2025Z'/%3E%3Crect%20x='29'%20y='34'%20width='6'%20height='27'%20rx='3'/%3E%3C/svg%3E") center / contain no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20x='16'%20y='3'%20width='5'%20height='25'%20rx='2.5'/%3E%3Crect%20x='29.5'%20y='3'%20width='5'%20height='25'%20rx='2.5'/%3E%3Crect%20x='43'%20y='3'%20width='5'%20height='25'%20rx='2.5'/%3E%3Cpath%20d='M16%2020H48V25C48%2033%2041%2038%2035%2039H29C23%2038%2016%2033%2016%2025Z'/%3E%3Crect%20x='29'%20y='34'%20width='6'%20height='27'%20rx='3'/%3E%3C/svg%3E") center / contain no-repeat;
+        }
+        html.thanksgiving ::-webkit-scrollbar-track { background: #1a0e08; }
+        html.thanksgiving ::-webkit-scrollbar-thumb { background: #5a3820; }
+        html.thanksgiving ::-webkit-scrollbar-thumb:hover { background: #d66e1e; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f0f0f;
+            color: #fdfbf7;
+        }
+
+        .countdown-box {
+            background: linear-gradient(135deg, rgba(217, 119, 6, 0.15), rgba(24, 24, 27, 0.8));
+            border: 1px solid rgba(217, 119, 6, 0.3);
+        }
+
+        .product-card {
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.7), 0 0 15px rgba(217, 119, 6, 0.15);
+        }
+
+        .slide-carousel {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        /* Color swatch tooltip (shows the color name on hover) */
+        .swatch-tip {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2b2a10;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0;
+            text-transform: none;
+            white-space: nowrap;
+            padding: 6px 10px;
+            border-radius: 6px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.15s ease;
+            z-index: 30;
+        }
+        .swatch:hover .swatch-tip,
+        .swatch:focus-visible .swatch-tip { opacity: 1; }
+
+        /* NEW starburst badge on nav items */
+        .new-star {
+            position: absolute;
+            top: -11px;
+            right: -13px;
+            width: 30px;
+            height: 30px;
+            background: rgb(var(--b-accent));
+            color: #fff;
+            font-size: 7px;
+            font-weight: 900;
+            letter-spacing: 0.02em;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: rotate(14deg);
+            clip-path: polygon(50.0% 0.0%, 59.8% 13.3%, 75.0% 6.7%, 76.9% 23.1%, 93.3% 25.0%, 86.7% 40.2%, 100.0% 50.0%, 86.7% 59.8%, 93.3% 75.0%, 76.9% 76.9%, 75.0% 93.3%, 59.8% 86.7%, 50.0% 100.0%, 40.2% 86.7%, 25.0% 93.3%, 23.1% 76.9%, 6.7% 75.0%, 13.3% 59.8%, 0.0% 50.0%, 13.3% 40.2%, 6.7% 25.0%, 23.1% 23.1%, 25.0% 6.7%, 40.2% 13.3%);
+            pointer-events: none;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f0f0f;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d97706;
+        }
+    </style>
+</head>
+<body class="bg-brand-black text-brand-cream min-h-screen flex flex-col justify-between selection:bg-brand-accent selection:text-white">
+
+    <!-- TOP CAROUSEL & ANNOUNCEMENT BAR -->
+    <div id="top-bar" class="bg-black text-xs md:text-sm font-medium border-b border-brand-border sticky top-0 z-50 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 py-2.5 flex flex-col sm:flex-row items-center justify-between gap-2">
+            
+            <!-- Carousel Announcement Slider -->
+            <div class="relative w-full sm:w-auto overflow-hidden h-6 flex items-center justify-center sm:justify-start">
+                <div id="carousel-track" class="flex transition-transform duration-500 ease-in-out">
+                    <div class="w-full shrink-0 text-center sm:text-left flex items-center gap-2 text-zinc-300">
+                        <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span class="font-bold tracking-wider text-brand-accent">NEXT DROP COMING SOON</span>
+                        <span class="hidden md:inline text-zinc-500">|</span>
+                        <span class="hidden md:inline">Wednesdays @ 2:00 PM EST</span>
+                    </div>
+                    <div class="w-full shrink-0 text-center sm:text-left flex items-center gap-2 text-zinc-300">
+                        <i class="fa-solid font-bold fa-truck-fast text-brand-accent"></i>
+                        <span>FREE SHIPPING ON ALL ORDERS OVER $50</span>
+                    </div>
+                    <div class="w-full shrink-0 text-center sm:text-left flex items-center gap-2 text-zinc-300">
+                        <i class="fa-solid fa-mug-hot text-brand-accent"></i>
+                        <span class="font-extrabold uppercase tracking-widest text-zinc-100">POUR THE DRINK. HOLD THE TALK.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Countdown Timer Display -->
+            <div class="flex flex-wrap justify-center sm:flex-nowrap sm:shrink-0 sm:whitespace-nowrap items-center gap-2 text-xs font-mono font-bold bg-zinc-900/90 px-3 py-1 rounded-full border border-zinc-800 shadow-inner">
+                <span class="text-zinc-400 uppercase text-[10px] tracking-wider">Next Drop In:</span>
+                <span id="drop-timer" class="text-brand-accent text-sm tracking-widest">00:00:00:00</span>
+
+                <!-- Thanksgiving theme switch + info icon -->
+                <div class="flex items-center gap-1.5 pl-2 ml-1 border-l border-zinc-700">
+                    <label class="flex items-center gap-1.5 cursor-pointer">
+                        <input type="checkbox" id="thanksgiving-toggle" role="switch" aria-label="Thanksgiving theme" class="sr-only peer" onchange="setThanksgiving(this.checked)">
+                        <span class="relative w-7 h-4 rounded-full bg-zinc-700 peer-checked:bg-brand-accent transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-3 after:h-3 after:rounded-full after:bg-white after:transition-transform peer-checked:after:translate-x-3 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-accent"></span>
+                        <span class="text-[10px] uppercase tracking-wider text-zinc-400 font-bold">Thanksgiving</span>
+                    </label>
+                    <button type="button" id="thanksgiving-info" aria-label="What is Thanksgiving mode?"
+                        onmouseenter="showThanksgivingTip(this)" onmouseleave="hideThanksgivingTip()"
+                        onfocus="showThanksgivingTip(this)" onblur="hideThanksgivingTip()"
+                        onclick="toggleThanksgivingTip(this)"
+                        class="w-4 h-4 rounded-full border border-zinc-500 text-zinc-400 hover:text-white hover:border-white text-[9px] font-serif italic font-bold flex items-center justify-center leading-none">i</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thanksgiving info tooltip -->
+    <div id="thanksgiving-tip" role="tooltip" class="hidden fixed z-[60] w-56 bg-zinc-900 border border-brand-accent/40 text-zinc-200 text-[11px] font-sans normal-case tracking-normal font-normal leading-snug rounded-lg px-3 py-2 shadow-xl pointer-events-none">
+        Thanksgiving Mode: flip this on to switch the whole shop to our cozy Thanksgiving theme. Flip it off to go back to the original look.
+    </div>
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="bg-brand-dark/80 backdrop-blur-md border-b border-zinc-800/80 sticky top-[41px] z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Brand Logo & Slogan -->
+                <div class="flex items-center gap-4">
+                    <a href="#" class="group flex flex-col">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-face-frown text-2xl text-brand-accent group-hover:rotate-12 transition-transform"></i>
+                            <span class="text-2xl sm:text-3xl font-black tracking-tighter uppercase text-white font-sans">
+                                QUIT MUGGIN<span class="text-brand-accent">'</span>
+                            </span>
+                        </div>
+                        <span class="text-[10px] tracking-widest font-mono text-zinc-400 uppercase -mt-1 group-hover:text-brand-accent transition-colors">
+                            Pour the drink. Hold the talk.
+                        </span>
+                    </a>
+                </div>
+
+                <!-- Desktop Navigation Links (alphabetical after All Products) -->
+                <nav class="hidden md:flex items-center space-x-1 lg:space-x-2 font-medium text-sm">
+                    <button onclick="goToCatalog('all')" class="nav-btn active px-4 py-2 rounded-lg text-white bg-zinc-800 border border-zinc-700 transition">
+                        All Products
+                    </button>
+                    <!-- Accessories with drop list + side list of products -->
+                    <div id="acc-dd-wrap" class="relative">
+                        <button onclick="toggleAccDropdown(event)" aria-haspopup="true" aria-expanded="false" id="acc-dd-btn" class="nav-btn relative px-4 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition">
+                            Accessories
+                            <i class="fa-solid fa-chevron-down text-[9px] ml-1"></i>
+                            <span class="new-star">NEW</span>
+                        </button>
+                        <div id="acc-dd" onmouseleave="closeAccSubs()" class="hidden absolute left-0 top-full mt-2 w-56 bg-brand-dark border border-zinc-700 rounded-xl shadow-2xl py-2 z-50">
+                            <div class="relative" onmouseenter="showAccSub('desktop-mats')">
+                                <button onclick="showAccSub('desktop-mats')" class="flex items-center justify-between w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">Desktop Mats <i class="fa-solid fa-chevron-right text-[9px] ml-2"></i></button>
+                                <div id="acc-sub-desktop-mats" class="acc-sub hidden absolute left-full top-0 -mt-2 w-80 bg-brand-dark border border-zinc-700 rounded-xl shadow-2xl py-2 z-50">
+                                <button onclick="openAccItem(14)" class="block w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">Cooking Up Reasons Round Mousepad</button>
+                                </div>
+                            </div>
+                            <div class="relative" onmouseenter="showAccSub('phone-cases')">
+                                <button onclick="showAccSub('phone-cases')" class="flex items-center justify-between w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">Phone Cases <i class="fa-solid fa-chevron-right text-[9px] ml-2"></i></button>
+                                <div id="acc-sub-phone-cases" class="acc-sub hidden absolute left-full top-0 -mt-2 w-80 bg-brand-dark border border-zinc-700 rounded-xl shadow-2xl py-2 z-50">
+                                <button onclick="openAccItem(16)" class="block w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">She Dachshund Paw with Charm Phone Case</button>
+                                <button onclick="openAccItem(17)" class="block w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">"I AM LEAFING" Dachshund w. Scarf Phone Case</button>
+                                </div>
+                            </div>
+                            <div class="relative" onmouseenter="showAccSub('stickers')">
+                                <button onclick="showAccSub('stickers')" class="flex items-center justify-between w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">Stickers <i class="fa-solid fa-chevron-right text-[9px] ml-2"></i></button>
+                                <div id="acc-sub-stickers" class="acc-sub hidden absolute left-full top-0 -mt-2 w-80 bg-brand-dark border border-zinc-700 rounded-xl shadow-2xl py-2 z-50">
+                                <button onclick="openAccItem(18)" class="block w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">Dachshund Magarita Glass Hand Kiss-Cut Sticker 3" x 4"</button>
+                                <button onclick="openAccItem(20)" class="block w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">Siamese Vinyl Kiss-Cut Sticker 3" x 4"</button>
+                                <button onclick="openAccItem(21)" class="block w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">Judging Dachshund 4-Piece Sticker Sheet 6" x 4"</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Apparel with drop list + side list of products -->
+                    <div id="app-dd-wrap" class="relative">
+                        <button onclick="toggleAppDropdown(event)" aria-haspopup="true" aria-expanded="false" id="app-dd-btn" class="nav-btn relative px-4 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition">
+                            Apparel
+                            <i class="fa-solid fa-chevron-down text-[9px] ml-1"></i>
+                            <span class="new-star">NEW</span>
+                        </button>
+                        <div id="app-dd" onmouseleave="closeAppSubs()" class="hidden absolute left-0 top-full mt-2 w-56 bg-brand-dark border border-zinc-700 rounded-xl shadow-2xl py-2 z-50">
+                            <div class="relative" onmouseenter="showAppSub('headwear')">
+                                <button onclick="showAppSub('headwear')" class="flex items-center justify-between w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">Headwear <i class="fa-solid fa-chevron-right text-[9px] ml-2"></i></button>
+                                <div id="app-sub-headwear" class="app-sub hidden absolute left-full top-0 -mt-2 w-80 bg-brand-dark border border-zinc-700 rounded-xl shadow-2xl py-2 z-50">
+                                <button onclick="openAppItem(37)" class="block w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">Dachshund Paw Ribbed Beanie</button>
+                                <button onclick="openAppItem(38)" class="block w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">Dachshund Paw with Charm Ribbed Beanie</button>
+                                </div>
+                            </div>
+                            <div class="relative" onmouseenter="showAppSub('hoodies')">
+                                <button onclick="showAppSub('hoodies')" class="flex items-center justify-between w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">Hoodies <i class="fa-solid fa-chevron-right text-[9px] ml-2"></i></button>
+                                <div id="app-sub-hoodies" class="app-sub hidden absolute left-full top-0 -mt-2 w-80 bg-brand-dark border border-zinc-700 rounded-xl shadow-2xl py-2 z-50">
+                                <button onclick="openAppItem(24)" class="block w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">"And Stay Away" Hoodie</button>
+                                <button onclick="openAppItem(27)" class="block w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">"Bye." Hoodie</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="goToCatalog('cards')" class="nav-btn relative px-4 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition">
+                        Cards
+                        <span class="new-star">NEW</span>
+                    </button>
+
+                    <!-- Ceramic Mugs with drop list -->
+                    <div id="ceramic-dd-wrap" class="relative">
+                        <button onclick="toggleCeramicDropdown(event)" aria-haspopup="true" aria-expanded="false" id="ceramic-dd-btn" class="nav-btn px-4 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition">
+                            Ceramic Mugs
+                            <i class="fa-solid fa-chevron-down text-[9px] ml-1"></i>
+                        </button>
+                        <div id="ceramic-dd" class="hidden absolute left-0 top-full mt-2 w-80 bg-brand-dark border border-zinc-700 rounded-xl shadow-2xl py-2 z-50">
+                            <button onclick="openCeramicItem(1)" class="block w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">404 Enthusiasm Not Found 11oz Ceramic Mug</button>
+                            <button onclick="openCeramicItem(2)" class="block w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">Judging Dachshund 11oz/15oz Ceramic Mug</button>
+                            <button onclick="openCeramicItem(10)" class="block w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">Not Curious 11oz Ceramic Mug</button>
+                            <button onclick="openCeramicItem(3)" class="block w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">Out-of-office 11oz/15oz Ceramic Mug</button>
+                            <button onclick="openCeramicItem(4)" class="block w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">Serve Looks Drink Coffee 11oz Ceramic Mug</button>
+                            <button onclick="openCeramicItem(13)" class="block w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">Speak Less Drink More 11oz Ceramic Mug</button>
+                            <button onclick="openCeramicItem(11)" class="block w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">Syntax Error 11oz Ceramic Mug</button>
+                            <button onclick="openCeramicItem(12)" class="block w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">Relax 11oz Ceramic Mug</button>
+                        </div>
+                    </div>
+
+                    <!-- Coasters with drop list -->
+                    <div id="coaster-dd-wrap" class="relative">
+                        <button onclick="toggleCoasterDropdown(event)" aria-haspopup="true" aria-expanded="false" id="coaster-dd-btn" class="nav-btn px-4 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition">
+                            Coasters
+                            <i class="fa-solid fa-chevron-down text-[9px] ml-1"></i>
+                        </button>
+                        <div id="coaster-dd" class="hidden absolute left-0 top-full mt-2 w-64 bg-brand-dark border border-zinc-700 rounded-xl shadow-2xl py-2 z-50">
+                            <button onclick="openCoasterItem(8)" class="block w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">Round Stamp Coaster</button>
+                            <button onclick="openCoasterItem(9)" class="block w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">Square Typography Coaster</button>
+                        </div>
+                    </div>
+                    <!-- Tumblers with drop list -->
+                    <div id="tumbler-dd-wrap" class="relative">
+                        <button onclick="toggleTumblerDropdown(event)" aria-haspopup="true" aria-expanded="false" id="tumbler-dd-btn" class="nav-btn px-4 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition">
+                            Tumblers
+                            <i class="fa-solid fa-chevron-down text-[9px] ml-1"></i>
+                        </button>
+                        <div id="tumbler-dd" class="hidden absolute left-0 top-full mt-2 w-64 bg-brand-dark border border-zinc-700 rounded-xl shadow-2xl py-2 z-50">
+                            <button onclick="openTumblerItem(41)" class="block w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">Procrastinate Tumbler</button>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- Actions: Cart & Quick Actions -->
+                <div class="flex items-center gap-3">
+                    <button id="cart-btn" onclick="toggleCartModal()" class="relative p-2.5 rounded-full bg-zinc-800/80 hover:bg-zinc-700 text-white transition border border-zinc-700">
+                        <i class="fa-solid fa-cart-shopping text-sm"></i>
+                        <span id="cart-count" class="absolute -top-1.5 -right-1.5 bg-brand-accent text-white font-mono text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow">0</span>
+                    </button>
+                    
+                    <!-- Mobile Hamburger -->
+                    <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-lg bg-zinc-800 text-zinc-300 hover:text-white">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-zinc-800 bg-brand-dark px-4 py-4 space-y-2">
+            <button onclick="goToCatalog('all'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-white bg-zinc-800">All Products</button>
+            <button onclick="toggleMobileAcc()" class="relative block w-full text-left px-3 py-2 rounded-md text-base font-medium text-zinc-300 hover:bg-zinc-800">Accessories <i class="fa-solid fa-chevron-down text-[10px] ml-1"></i> <span class="new-star" style="top:-6px; right:8px;">NEW</span></button>
+            <div id="mobile-acc-list" class="hidden pl-3 space-y-1 border-l border-zinc-700 ml-3">
+                <button onclick="toggleMobileSub('desktop-mats')" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-300 hover:text-white">Desktop Mats <i class="fa-solid fa-chevron-down text-[9px] ml-1"></i></button>
+                <div id="mobile-sub-desktop-mats" class="hidden pl-3 space-y-1 border-l border-zinc-700 ml-3">
+                    <button onclick="openAccItem(14); toggleMobileMenu();" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-400 hover:text-white">Cooking Up Reasons Round Mousepad</button>
+                </div>
+                <button onclick="toggleMobileSub('phone-cases')" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-300 hover:text-white">Phone Cases <i class="fa-solid fa-chevron-down text-[9px] ml-1"></i></button>
+                <div id="mobile-sub-phone-cases" class="hidden pl-3 space-y-1 border-l border-zinc-700 ml-3">
+                    <button onclick="openAccItem(16); toggleMobileMenu();" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-400 hover:text-white">She Dachshund Paw with Charm Phone Case</button>
+                    <button onclick="openAccItem(17); toggleMobileMenu();" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-400 hover:text-white">"I AM LEAFING" Dachshund w. Scarf Phone Case</button>
+                </div>
+                <button onclick="toggleMobileSub('stickers')" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-300 hover:text-white">Stickers <i class="fa-solid fa-chevron-down text-[9px] ml-1"></i></button>
+                <div id="mobile-sub-stickers" class="hidden pl-3 space-y-1 border-l border-zinc-700 ml-3">
+                    <button onclick="openAccItem(18); toggleMobileMenu();" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-400 hover:text-white">Dachshund Magarita Glass Hand Kiss-Cut Sticker 3" x 4"</button>
+                    <button onclick="openAccItem(20); toggleMobileMenu();" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-400 hover:text-white">Siamese Vinyl Kiss-Cut Sticker 3" x 4"</button>
+                    <button onclick="openAccItem(21); toggleMobileMenu();" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-400 hover:text-white">Judging Dachshund 4-Piece Sticker Sheet 6" x 4"</button>
+                </div>
+            </div>
+            <button onclick="toggleMobileApp()" class="relative block w-full text-left px-3 py-2 rounded-md text-base font-medium text-zinc-300 hover:bg-zinc-800">Apparel <i class="fa-solid fa-chevron-down text-[10px] ml-1"></i> <span class="new-star" style="top:-6px; right:8px;">NEW</span></button>
+            <div id="mobile-app-list" class="hidden pl-3 space-y-1 border-l border-zinc-700 ml-3">
+                <button onclick="toggleMobileAppSub('headwear')" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-300 hover:text-white">Headwear <i class="fa-solid fa-chevron-down text-[9px] ml-1"></i></button>
+                <div id="mobile-app-sub-headwear" class="hidden pl-3 space-y-1 border-l border-zinc-700 ml-3">
+                    <button onclick="openAppItem(37); toggleMobileMenu();" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-400 hover:text-white">Dachshund Paw Ribbed Beanie</button>
+                    <button onclick="openAppItem(38); toggleMobileMenu();" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-400 hover:text-white">Dachshund Paw with Charm Ribbed Beanie</button>
+                </div>
+                <button onclick="toggleMobileAppSub('hoodies')" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-300 hover:text-white">Hoodies <i class="fa-solid fa-chevron-down text-[9px] ml-1"></i></button>
+                <div id="mobile-app-sub-hoodies" class="hidden pl-3 space-y-1 border-l border-zinc-700 ml-3">
+                    <button onclick="openAppItem(24); toggleMobileMenu();" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-400 hover:text-white">"And Stay Away" Hoodie</button>
+                    <button onclick="openAppItem(27); toggleMobileMenu();" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-400 hover:text-white">"Bye." Hoodie</button>
+                </div>
+            </div>
+            <button onclick="goToCatalog('cards'); toggleMobileMenu();" class="relative block w-full text-left px-3 py-2 rounded-md text-base font-medium text-zinc-300 hover:bg-zinc-800">Cards <span class="new-star" style="top:-6px; right:8px;">NEW</span></button>
+            <button onclick="toggleMobileCeramic()" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-zinc-300 hover:bg-zinc-800">Ceramic Mugs <i class="fa-solid fa-chevron-down text-[10px] ml-1"></i></button>
+            <div id="mobile-ceramic-list" class="hidden pl-3 space-y-1 border-l border-zinc-700 ml-3">
+                <button onclick="openCeramicItem(1); toggleMobileMenu();" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-400 hover:text-white">404 Enthusiasm Not Found 11oz Ceramic Mug</button>
+                <button onclick="openCeramicItem(2); toggleMobileMenu();" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-400 hover:text-white">Judging Dachshund 11oz/15oz Ceramic Mug</button>
+                <button onclick="openCeramicItem(10); toggleMobileMenu();" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-400 hover:text-white">Not Curious 11oz Ceramic Mug</button>
+                <button onclick="openCeramicItem(3); toggleMobileMenu();" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-400 hover:text-white">Out-of-office 11oz/15oz Ceramic Mug</button>
+                <button onclick="openCeramicItem(4); toggleMobileMenu();" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-400 hover:text-white">Serve Looks Drink Coffee 11oz Ceramic Mug</button>
+                <button onclick="openCeramicItem(13); toggleMobileMenu();" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-400 hover:text-white">Speak Less Drink More 11oz Ceramic Mug</button>
+                <button onclick="openCeramicItem(11); toggleMobileMenu();" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-400 hover:text-white">Syntax Error 11oz Ceramic Mug</button>
+                <button onclick="openCeramicItem(12); toggleMobileMenu();" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-400 hover:text-white">Relax 11oz Ceramic Mug</button>
+            </div>
+            <button onclick="toggleMobileCoaster()" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-zinc-300 hover:bg-zinc-800">Coasters <i class="fa-solid fa-chevron-down text-[10px] ml-1"></i></button>
+            <div id="mobile-coaster-list" class="hidden pl-3 space-y-1 border-l border-zinc-700 ml-3">
+                <button onclick="openCoasterItem(8); toggleMobileMenu();" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-400 hover:text-white">Round Stamp Coaster</button>
+                <button onclick="openCoasterItem(9); toggleMobileMenu();" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-400 hover:text-white">Square Typography Coaster</button>
+            </div>
+            <button onclick="toggleMobileTumbler()" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-zinc-300 hover:bg-zinc-800">Tumblers <i class="fa-solid fa-chevron-down text-[10px] ml-1"></i></button>
+            <div id="mobile-tumbler-list" class="hidden pl-3 space-y-1 border-l border-zinc-700 ml-3">
+                <button onclick="openTumblerItem(41); toggleMobileMenu();" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-400 hover:text-white">Procrastinate Tumbler</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- STRIPE CHECKOUT (embedded - customers pay without leaving the site) -->
+    <div id="checkout-overlay" class="hidden fixed inset-0 z-[70] bg-black/85 overflow-y-auto" onclick="if(event.target===this)closeCheckout()">
+        <div role="dialog" aria-modal="true" aria-labelledby="checkout-title" class="relative max-w-3xl mx-auto my-4 sm:my-8 px-3 sm:px-6 py-6 bg-brand-dark border border-brand-border/60 rounded-2xl shadow-2xl">
+            <button onclick="closeCheckout()" aria-label="Close checkout" class="absolute top-3 right-4 text-zinc-400 hover:text-white text-3xl leading-none z-10">&times;</button>
+            <h2 id="checkout-title" class="text-xl md:text-2xl font-black uppercase tracking-tight text-white mb-4 pr-8">Secure Checkout</h2>
+            <p id="checkout-status" class="hidden text-sm text-zinc-300 mb-4"></p>
+            <div id="checkout-mount" class="bg-white rounded-xl overflow-hidden min-h-[200px]"></div>
+            <div id="checkout-success" class="hidden text-center py-10">
+                <i class="fa-solid fa-circle-check text-5xl text-brand-accent"></i>
+                <h3 class="mt-4 text-2xl font-black uppercase text-white">Payment received!</h3>
+                <p class="mt-2 text-sm text-zinc-300 max-w-md mx-auto">Thank you for your order. A receipt is on its way to your email, and your items are made to order, so standard delivery takes 3&ndash;7 business days.</p>
+                <button onclick="closeCheckout()" class="mt-6 bg-brand-accent hover:bg-brand-accentHover text-white text-xs font-bold uppercase tracking-wider px-6 py-2.5 rounded-lg transition">Back to the shop</button>
+            </div>
+            <p class="mt-4 text-[11px] text-zinc-500 text-center"><i class="fa-solid fa-lock mr-1"></i>Payments are processed securely by Stripe. We never see or store your card details.</p>
+        </div>
+    </div>
+
+    <!-- POLICY POPUP (footer "Policy" link) -->
+    <div id="policy-overlay" class="hidden fixed inset-0 z-[65] bg-black/80 overflow-y-auto" onclick="if(event.target===this)closeOverlays()">
+        <div role="dialog" aria-modal="true" aria-labelledby="policy-title" class="relative max-w-2xl mx-auto my-4 sm:my-8 px-5 sm:px-8 py-8 bg-brand-dark border border-brand-border/60 rounded-2xl shadow-2xl">
+            <button onclick="closeOverlays()" aria-label="Close policies" class="absolute top-3 right-4 text-zinc-400 hover:text-white text-3xl leading-none">&times;</button>
+            <h2 id="policy-title" class="text-2xl md:text-3xl font-black uppercase tracking-tight text-white">Store Policies</h2>
+            <p class="text-xs font-mono text-zinc-400 mt-1">QUIT MUGGIN' &bull; Please read before you order</p>
+
+            <div class="mt-6 space-y-5 text-sm text-zinc-300 leading-relaxed">
+                <section>
+                    <h3 class="font-bold text-white uppercase text-xs tracking-wider mb-1">Made to order</h3>
+                    <p>Everything we sell is printed on demand just for you, so we never sit on dead stock. Production starts after your order is placed.</p>
+                </section>
+                <section>
+                    <h3 class="font-bold text-white uppercase text-xs tracking-wider mb-1">Shipping &amp; delivery</h3>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>Standard delivery takes <strong class="text-white">3&ndash;7 business days</strong>.</li>
+                        <li>FREE shipping on all orders over $50. Wrapping paper pre-sale orders ship free with 3 or more papers.</li>
+                        <li>Delivery estimates are not guarantees. Weather, holidays, and carrier delays can add time, and drop-day and holiday orders may take longer.</li>
+                        <li>We ship within the United States. Please double-check your address at checkout.</li>
+                    </ul>
+                </section>
+                <section>
+                    <h3 class="font-bold text-white uppercase text-xs tracking-wider mb-1">Wrong address</h3>
+                    <p>We can't be responsible for packages sent to an incorrect or incomplete address entered at checkout. If you spot a mistake, contact us right away; once an order is in production the address may not be changeable.</p>
+                </section>
+                <section>
+                    <h3 class="font-bold text-white uppercase text-xs tracking-wider mb-1">Refunds &amp; replacements (photo proof required)</h3>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>If your item arrives damaged, defective, misprinted, or is not what you ordered, contact us within <strong class="text-white">14 days of delivery</strong>.</li>
+                        <li>Include your order number and <strong class="text-white">clear photos</strong> of the item, the packaging, and the shipping label. For broken mugs, please show the damage and how it was packed.</li>
+                        <li>Once approved, we'll send a free replacement or issue a refund to your original payment method.</li>
+                        <li>Refunds can take up to 2&ndash;5 business days to show up, depending on your bank institution.</li>
+                    </ul>
+                </section>
+                <section>
+                    <h3 class="font-bold text-white uppercase text-xs tracking-wider mb-1">What we can't refund</h3>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>Change of mind, or items ordered in the wrong size, color, or phone model. Please check the size details before you order.</li>
+                        <li>Minor color differences between your screen and the printed item.</li>
+                        <li>Damage caused by misuse, wear, or improper care after delivery.</li>
+                        <li>Orders delivered to the address you provided, or reports made after 14 days.</li>
+                    </ul>
+                </section>
+                <section>
+                    <h3 class="font-bold text-white uppercase text-xs tracking-wider mb-1">Returns</h3>
+                    <p>Because items are made just for you, we don't accept returns for a change of mind. Please don't send anything back before contacting us, as unapproved returns can't be accepted or refunded.</p>
+                </section>
+                <section>
+                    <h3 class="font-bold text-white uppercase text-xs tracking-wider mb-1">Cancellations &amp; changes</h3>
+                    <p>You can request a cancellation or change within 24 hours of ordering, as long as production hasn't started. After that, the order can't be changed or cancelled.</p>
+                </section>
+                <section>
+                    <h3 class="font-bold text-white uppercase text-xs tracking-wider mb-1">Lost or delayed packages</h3>
+                    <p>If your tracking shows no movement for 2 or more business days, or it says delivered but you can't find it, check with neighbors and your local carrier first, then contact us and we'll help sort it out as soon as possible.</p>
+                </section>
+                <section>
+                    <h3 class="font-bold text-white uppercase text-xs tracking-wider mb-1">Pre-sale orders</h3>
+                    <p>Pre-sale orders are reserved ahead of the public drop and are made to order, so they follow the same shipping, refund, and cancellation terms above. The deal (Buy 2, Get 1 For 50% Off + FREE Shipping) applies automatically at checkout, and the 50% off goes to the 3rd paper in your order. Pre-sale customers get early access to the drop through their client portal.</p>
+                </section>
+                <section>
+                    <h3 class="font-bold text-white uppercase text-xs tracking-wider mb-1">Pricing &amp; availability</h3>
+                    <p>We do our best to keep every listing accurate. If a price or product detail is wrong, we may correct it or cancel and refund the affected order. Drops are limited and designs may sell out or retire at any time.</p>
+                </section>
+                <section>
+                    <h3 class="font-bold text-white uppercase text-xs tracking-wider mb-1">Privacy</h3>
+                    <p>We only use your name, email, phone, and address to fulfill and support your order. We never sell your information.</p>
+                </section>
+                <section>
+                    <h3 class="font-bold text-white uppercase text-xs tracking-wider mb-1">Contact us</h3>
+                    <p id="policy-contact">Have an issue with an order? Reach out with your order number and we'll make it right.</p>
+                </section>
+            </div>
+
+            <div class="mt-8 text-center">
+                <button onclick="closeOverlays()" class="bg-brand-accent hover:bg-brand-accentHover text-white text-xs font-bold uppercase tracking-wider px-6 py-2.5 rounded-lg transition">Got it</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- THANKSGIVING WRAPPING PAPER PRE-SALE POPUP (opens ~1.5 seconds after the site loads) -->
+    <div id="presale-overlay" class="hidden fixed inset-0 z-[65] bg-black/80 overflow-y-auto" onclick="if(event.target===this)closeOverlays()">
+        <div class="relative max-w-6xl mx-auto my-4 sm:my-8 px-4 sm:px-6 py-8 bg-brand-dark border border-brand-border/60 rounded-2xl shadow-2xl">
+            <button onclick="closeOverlays()" aria-label="Close pre-sale" class="absolute top-3 right-4 text-zinc-400 hover:text-white text-3xl leading-none">&times;</button>
+            <div class="text-center mb-8">
+                <span class="inline-block bg-brand-accent text-white font-mono text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded mb-3">Pre-Sale • Drops Sat, Nov 21 @ 8:00 AM ET</span>
+                <h2 class="text-3xl md:text-5xl font-black uppercase tracking-tight text-white">Thanksgiving Wrapping Paper Collection</h2>
+                <p class="text-brand-accent font-extrabold text-lg md:text-2xl mt-2">Buy 2, Get 1 For 50% Off + FREE Shipping</p>
+                <p class="text-xs text-zinc-400 font-mono mt-2">Pre-sale: these haven't dropped yet, so reserve yours now. <a onclick="openPortal()" class="underline cursor-pointer hover:text-white">Already ordered? Open your portal</a></p>
+            </div>
+            <div id="presale-cards" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+            <div class="mt-8 max-w-2xl mx-auto">
+                <div id="presale-form-wrap" class="bg-brand-card border border-brand-border/60 rounded-2xl p-5 space-y-4">
+                    <p id="presale-test-banner" class="hidden text-[11px] font-mono text-amber-400 border border-amber-500/40 rounded-lg px-3 py-2">TEST MODE: orders save only in this browser until the live order database is connected.</p>
+                    <h3 class="font-black uppercase text-white">Your Pre-Sale Order</h3>
+                    <div id="presale-summary"></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <input id="ps-name" type="text" placeholder="Full name" autocomplete="name" class="bg-zinc-900 border border-zinc-700 text-white rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-brand-accent">
+                        <input id="ps-phone" type="tel" placeholder="Phone number" autocomplete="tel" class="bg-zinc-900 border border-zinc-700 text-white rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-brand-accent">
+                        <input id="ps-email" type="email" placeholder="Email" autocomplete="email" class="bg-zinc-900 border border-zinc-700 text-white rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-brand-accent">
+                    </div>
+                    <p id="presale-error" class="hidden text-red-400 text-xs font-mono"></p>
+                    <button onclick="submitPresale()" class="w-full bg-brand-accent hover:bg-brand-accentHover text-white font-bold text-sm uppercase tracking-wider px-6 py-3 rounded-lg transition">Submit Pre-Sale Order</button>
+                </div>
+                <div id="presale-thanks" class="hidden bg-brand-card border border-brand-accent/50 rounded-2xl p-6 text-center"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CLIENT PORTAL (shared login; open with #portal) -->
+    <div id="portal-overlay" class="hidden fixed inset-0 z-[70] bg-brand-black overflow-y-auto">
+        <div class="max-w-3xl mx-auto px-4 py-8">
+            <button onclick="closeOverlays()" class="text-zinc-400 hover:text-white text-xs font-mono mb-6"><i class="fa-solid fa-arrow-left mr-1"></i> Back to shop</button>
+            <div id="portal-login" class="bg-brand-card border border-brand-border/60 rounded-2xl p-6 text-center">
+                <h2 class="text-2xl font-black uppercase text-white">Client Portal</h2>
+                <p class="text-xs text-zinc-400 mt-1 mb-4">Enter the portal number from your order confirmation.</p>
+                <input id="portal-number" type="text" placeholder="QM-XXXX-XXXX" onkeydown="if(event.key==='Enter')portalLogin()" class="w-full max-w-xs text-center font-mono tracking-widest bg-zinc-900 border border-zinc-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-accent">
+                <p id="portal-error" class="hidden text-red-400 text-xs font-mono mt-3"></p>
+                <button onclick="portalLogin()" class="block mx-auto mt-4 bg-brand-accent hover:bg-brand-accentHover text-white font-bold text-sm uppercase tracking-wider px-6 py-2.5 rounded-lg transition">Log in</button>
+            </div>
+            <div id="portal-body"></div>
+        </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD (open with #admin) -->
+    <div id="admin-overlay" class="hidden fixed inset-0 z-[70] bg-brand-black overflow-y-auto">
+        <div class="max-w-6xl mx-auto px-4 py-8">
+            <button onclick="closeOverlays()" class="text-zinc-400 hover:text-white text-xs font-mono mb-6"><i class="fa-solid fa-arrow-left mr-1"></i> Back to shop</button>
+            <h2 class="text-2xl font-black uppercase text-white mb-4">Pre-Sale Admin</h2>
+            <div id="admin-login" class="bg-brand-card border border-brand-border/60 rounded-2xl p-6 max-w-sm">
+                <input id="admin-pw" type="password" placeholder="Admin password" onkeydown="if(event.key==='Enter')adminLogin()" class="w-full bg-zinc-900 border border-zinc-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-accent">
+                <p id="admin-error" class="hidden text-red-400 text-xs font-mono mt-3"></p>
+                <button onclick="adminLogin()" class="mt-4 bg-brand-accent hover:bg-brand-accentHover text-white font-bold text-sm uppercase tracking-wider px-6 py-2.5 rounded-lg transition">Log in</button>
+            </div>
+            <div id="admin-body"></div>
+        </div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <section class="relative bg-gradient-to-b from-brand-dark via-brand-black to-brand-black py-16 lg:py-24 overflow-hidden border-b border-zinc-800/50">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#d97706_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-accent/10 border border-brand-accent/30 text-brand-accent text-xs font-mono font-bold tracking-wider uppercase">
+                        <i class="fa-solid fa-fire"></i> Sarcasm & Caffeine Collection
+                    </div>
+                    <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight uppercase leading-none">
+                        SERVE LOOKS. <br/>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-accent via-amber-400 to-yellow-200">
+                            BE HYDRATED.
+                        </span>
+                    </h1>
+                    <p class="text-zinc-400 text-lg max-w-2xl font-light leading-relaxed mx-auto lg:mx-0">
+                        High-quality ceramic mugs, laser-engraved tumblers, and cork-backed coasters designed for people whose workplace out-of-office message is a permanent mood.
+                    </p>
+                    
+                    <div class="pt-4 flex flex-wrap items-center justify-center lg:justify-start gap-4">
+                        <a href="#product-grid" class="px-8 py-4 rounded-xl bg-brand-accent hover:bg-brand-accentHover text-white font-bold tracking-wide uppercase shadow-lg shadow-brand-accent/20 transition hover:scale-105 active:scale-95 flex items-center gap-3">
+                            <span>Explore Drop</span>
+                            <i class="fa-solid fa-arrow-down-long"></i>
+                        </a>
+                        <div class="flex items-center gap-3 text-xs text-zinc-400 font-mono px-4 py-3 bg-zinc-900/80 rounded-xl border border-zinc-800">
+                            <i class="fa-solid fa-shield-halved text-brand-accent text-base"></i>
+                            <span>Laser Engraved & Dishwasher Safe</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Drop Highlight Card -->
+                <div class="lg:col-span-5">
+                    <div class="countdown-box p-6 rounded-2xl relative shadow-2xl overflow-hidden backdrop-blur-md">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <span class="text-xs font-mono uppercase tracking-widest text-brand-accent font-bold">Featured Drop Item</span>
+                                <h3 class="text-xl font-bold text-white uppercase">404 Enthusiasm Not Found</h3>
+                            </div>
+                            <span class="bg-red-500/20 text-red-400 text-[10px] font-mono px-2.5 py-1 rounded-full border border-red-500/30 uppercase tracking-widest font-bold animate-pulse">High Demand</span>
+                        </div>
+                        
+                        <div class="relative rounded-xl overflow-hidden bg-zinc-900 mb-6 group cursor-pointer" onclick="openQuickView(1)">
+                            <img id="hero-img" src="images/404_content.jpg" alt="404 Enthusiasm Not Found Mug" class="w-full h-64 object-cover object-center group-hover:scale-105 transition duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4">
+                                <span class="text-xs font-mono text-zinc-300">Front: Minimalist Face | Back: "404: ENTHUSIASM NOT FOUND"</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-xs text-zinc-400">Limited Quantity</span>
+                                <div class="text-2xl font-extrabold text-white font-mono">$11.99</div>
+                            </div>
+                            <button onclick="openQuickView(1)" class="px-5 py-2.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-xs uppercase tracking-wider transition border border-zinc-700">
+                                Quick View
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN PRODUCT SECTION -->
+    <main id="product-grid" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 flex-grow scroll-mt-32">
+        
+        <!-- Filter Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 pb-6 border-b border-zinc-800 gap-4">
+            <div>
+                <h2 class="text-3xl sm:text-4xl font-black uppercase tracking-tight text-white flex items-center gap-3">
+                    Product Catalog
+                    <span id="catalog-count" class="text-sm font-mono font-normal text-brand-accent bg-zinc-900 px-3 py-1 rounded-full border border-zinc-800">40 Items</span>
+                </h2>
+                <p class="text-zinc-400 text-sm mt-1">Select a category to filter through our premium drinkware and coasters.</p>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="flex flex-wrap gap-2">
+                <button onclick="filterCategory('all')" class="filter-btn active-tab px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider bg-brand-accent text-white transition shadow">
+                    All
+                </button>
+                <button onclick="filterCategory('ceramic')" class="filter-btn px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider bg-zinc-900 text-zinc-400 hover:text-white hover:bg-zinc-800 transition border border-zinc-800">
+                    Ceramic Mugs
+                </button>
+                <button onclick="filterCategory('tumbler')" class="filter-btn px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider bg-zinc-900 text-zinc-400 hover:text-white hover:bg-zinc-800 transition border border-zinc-800">
+                    Tumbler Mugs
+                </button>
+                <button onclick="filterCategory('coaster')" class="filter-btn px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider bg-zinc-900 text-zinc-400 hover:text-white hover:bg-zinc-800 transition border border-zinc-800">
+                    Coasters
+                </button>
+                <button onclick="filterCategory('apparel')" class="filter-btn px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider bg-zinc-900 text-zinc-400 hover:text-white hover:bg-zinc-800 transition border border-zinc-800">
+                    Apparel
+                </button>
+                <button onclick="filterCategory('accessories')" class="filter-btn px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider bg-zinc-900 text-zinc-400 hover:text-white hover:bg-zinc-800 transition border border-zinc-800">
+                    Accessories
+                </button>
+                <button onclick="filterCategory('cards')" class="filter-btn px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider bg-zinc-900 text-zinc-400 hover:text-white hover:bg-zinc-800 transition border border-zinc-800">
+                    Cards
+                </button>
+            </div>
+        </div>
+
+        <!-- Products Grid Container -->
+        <div id="products-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Dynamically Rendered via JS -->
+        </div>
+    </main>
+
+    <!-- NEWSLETTER SECTION -->
+    <section class="bg-zinc-900/60 border-y border-zinc-800 py-16 my-12">
+        <div class="max-w-4xl mx-auto px-4 text-center space-y-6">
+            <i class="fa-solid fa-bell text-3xl text-brand-accent animate-bounce"></i>
+            <h2 class="text-3xl font-black uppercase tracking-tight text-white">NEVER MISS A WEDNESDAY DROP</h2>
+            <p class="text-zinc-400 text-sm max-w-xl mx-auto">
+                Sign up for instant sms/email notifications 15 minutes before the drop goes live. Limited quantities per design batch.
+            </p>
+            <form onsubmit="handleNewsletter(event)" class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="hidden">
+                <input id="newsletter-email" type="email" required placeholder="Enter your email address..." class="px-4 py-3 rounded-xl bg-brand-black border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:border-brand-accent flex-grow text-sm">
+                <button id="newsletter-btn" type="submit" class="px-6 py-3 rounded-xl bg-brand-accent hover:bg-brand-accentHover text-white font-bold text-sm uppercase tracking-wider transition whitespace-nowrap disabled:opacity-60">
+                    Get Drop Alerts
+                </button>
+            </form>
+            <p id="newsletter-msg" class="text-xs text-emerald-400 hidden font-mono">You're on the list! We'll alert you next Wednesday @ 2 PM EST.</p>
+        </div>
+    </section>
+
+    <!-- PRODUCT QUICK VIEW MODAL -->
+    <div id="quickview-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-brand-dark border border-zinc-800 rounded-2xl max-w-3xl w-full overflow-hidden shadow-2xl relative max-h-[90vh] flex flex-col md:flex-row">
+            
+            <!-- Close Modal Button -->
+            <button onclick="closeQuickView()" class="absolute top-4 right-4 z-10 w-9 h-9 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-full flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- Modal Image & View Toggle -->
+            <div class="w-full md:w-1/2 bg-zinc-900/80 p-6 flex flex-col justify-between items-center border-b md:border-b-0 md:border-r border-zinc-800">
+                <div class="relative w-full aspect-square rounded-xl overflow-hidden bg-black/40 flex items-center justify-center">
+                    <img id="modal-img" src="" alt="Product view" class="w-full h-full object-cover" onerror="modalImgFallback(this)">
+                </div>
+                
+                <!-- View Switcher (Front vs Back vs Context) -->
+                <div id="modal-views" class="flex flex-wrap justify-center gap-2 mt-4">
+                    <!-- Dynamic buttons -->
+                </div>
+
+                <!-- Color swatches (only for products that come in colors) -->
+                <div id="modal-colors-wrap" class="hidden w-full mt-4">
+                    <div class="text-[10px] font-mono uppercase tracking-wider text-zinc-400 mb-2 text-center">Colors</div>
+                    <div id="modal-colors" class="flex flex-wrap justify-center gap-2.5"></div>
+                </div>
+            </div>
+
+            <!-- Modal Product Details -->
+            <div class="w-full md:w-1/2 p-6 flex flex-col justify-between space-y-4 overflow-y-auto">
+                <div>
+                    <span id="modal-category" class="text-[10px] font-mono uppercase tracking-widest text-brand-accent bg-brand-accent/10 px-2.5 py-1 rounded border border-brand-accent/20">Category</span>
+                    <h3 id="modal-title" class="text-2xl font-black text-white uppercase mt-2">Product Title</h3>
+                    <div id="modal-price" class="text-xl font-extrabold text-brand-accent font-mono mt-1">$0.00</div>
+                    <div id="modal-shipping" class="text-[11px] font-mono text-zinc-400 mt-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-truck-fast text-brand-accent"></i>
+                        <span id="modal-shipping-text">Shipping</span>
+                    </div>
+                    <p id="modal-desc" class="text-zinc-400 text-xs mt-3 leading-relaxed">Product description goes here.</p>
+                </div>
+
+                <!-- Custom Options (Shape / Size) -->
+                <div class="space-y-3 pt-2">
+                    <div id="option-container-1">
+                        <label id="modal-size-label" class="block text-xs font-mono text-zinc-400 uppercase mb-1">Select Size:</label>
+                        <select id="modal-variant-select" onchange="updateModalPricing()" class="w-full bg-zinc-900 border border-zinc-700 text-white rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-brand-accent">
+                            <option>11 oz Standard Mug</option>
+                            <option>15 oz Large Mug</option>
+                        </select>
+                    </div>
+
+                    <div id="option-container-color" class="hidden">
+                        <label class="block text-xs font-mono text-zinc-400 uppercase mb-1">Select Color:</label>
+                        <select id="modal-color-select" onchange="selectColor(this.value)" class="w-full bg-zinc-900 border border-zinc-700 text-white rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-brand-accent"></select>
+                    </div>
+
+                    <div id="option-container-shape" class="hidden">
+                        <label class="block text-xs font-mono text-zinc-400 uppercase mb-1">Coaster Shape:</label>
+                        <div class="flex gap-2">
+                            <button class="flex-1 py-1.5 text-xs bg-zinc-800 border border-brand-accent text-white rounded">Round</button>
+                            <button class="flex-1 py-1.5 text-xs bg-zinc-900 border border-zinc-700 text-zinc-400 rounded">Square</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add to Cart Action -->
+                <div class="pt-4 border-t border-zinc-800 flex items-center gap-3">
+                    <button id="modal-add-btn" onclick="" class="w-full py-3.5 rounded-xl bg-brand-accent hover:bg-brand-accentHover text-white font-bold text-xs uppercase tracking-wider transition shadow-lg shadow-brand-accent/20 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                        <span>Add To Cart</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CART DRAWERS / MODAL -->
+    <div id="cart-drawer" class="fixed inset-0 bg-black/70 z-50 hidden flex justify-end">
+        <div class="w-full max-w-md bg-brand-dark h-full border-l border-zinc-800 p-6 flex flex-col justify-between shadow-2xl">
+            <div>
+                <div class="flex justify-between items-center pb-4 border-b border-zinc-800">
+                    <h3 class="text-lg font-black uppercase text-white flex items-center gap-2">
+                        <i class="fa-solid fa-shopping-bag text-brand-accent"></i>
+                        Your Cart
+                    </h3>
+                    <button onclick="toggleCartModal()" class="text-zinc-400 hover:text-white p-2">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <div id="cart-items" class="py-4 space-y-4 max-h-[60vh] overflow-y-auto">
+                    <!-- Cart items injected dynamically -->
+                    <div class="text-center py-12 text-zinc-500 font-mono text-xs">
+                        Your cart is empty. Go add some muggin' gear!
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4 border-t border-zinc-800 space-y-4">
+                <!-- Free shipping tracker -->
+                <div id="shipping-progress" class="hidden space-y-1.5">
+                    <div id="shipping-progress-text" class="text-[11px] font-mono text-zinc-300"></div>
+                    <div class="h-1.5 w-full bg-zinc-800 rounded-full overflow-hidden">
+                        <div id="shipping-progress-bar" class="h-full bg-brand-accent rounded-full transition-all duration-500" style="width:0%"></div>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center text-sm font-mono">
+                        <span class="text-zinc-400">Subtotal:</span>
+                        <span id="cart-subtotal" class="text-white font-bold">$0.00</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm font-mono">
+                        <span class="text-zinc-400">Shipping:</span>
+                        <span id="cart-shipping" class="text-white font-bold">$0.00</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm font-mono pt-2 border-t border-zinc-800">
+                        <span class="text-zinc-300">Total:</span>
+                        <span id="cart-total" class="text-brand-accent font-extrabold">$0.00</span>
+                    </div>
+                </div>
+                <button onclick="startCheckout()" class="w-full py-3.5 rounded-xl bg-brand-accent hover:bg-brand-accentHover text-white font-bold text-xs uppercase tracking-wider transition">
+                    Checkout Now
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-black border-t border-zinc-800 py-10 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-face-frown text-xl text-brand-accent"></i>
+                    <span class="text-lg font-black uppercase tracking-tight text-white">QUIT MUGGIN'</span>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-6 text-xs text-zinc-400 font-medium">
+                    <a href="#" onclick="openPolicy(); return false;" class="hover:text-brand-accent transition">Policy</a>
+                    <a href="#" onclick="openPortal(); return false;" class="hover:text-brand-accent transition">Customer Portal</a>
+                    <a href="#" onclick="showDropSchedule(); return false;" class="hover:text-brand-accent transition">Drop Schedule</a>
+                </div>
+
+                <!-- Copyright -->
+                <div class="text-xs text-zinc-500 font-mono text-center md:text-right">
+                    © QUIT MUGGIN' | All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- SHIPPING SETTINGS ---
+        // --- EMAILJS SETTINGS (the public key is meant to be public; never put a private key here) ---
+        const EMAILJS_PUBLIC_KEY = "tTcpWKiXWJ9ZECnCK";
+        const EMAILJS_SERVICE_ID = "eliannaf.ef@gmail.com";       // the Service ID shown in EmailJS > Email Services (this one is a custom ID; it is visible in the page source)
+        const EMAILJS_TEMPLATE_ALERTS = "template_7jtkw6e";         // "Wednesday drop alert" signups
+        const EMAILJS_TEMPLATE_PRESALE = "template_8zrdc8o";        // pre-sale orders (sent to the shop owner)
+        // --- STRIPE SETTINGS (fill these in once; see the setup steps) ---
+        const STRIPE_PUBLISHABLE_KEY = "pk_test_REPLACE_ME";                        // your pk_test_... key (safe to be public). Swap for pk_live_... when you go live.
+        const CHECKOUT_API_URL = "https://REPLACE-ME.workers.dev";                  // your Cloudflare Worker address
+        const FREE_SHIPPING_THRESHOLD = 50; // shipping is removed automatically once the subtotal reaches this
+
+        // Ceramic mug size options (price + shipping per size)
+        // Folder where the product photos live, relative to this HTML file.
+        // If your photos are in the same folder as this file, change this to "".
+        const IMG_PATH = "images/";
+
+        // Placeholder photo until real pictures are added
+        const ph = (t) => "https://placehold.co/600x600/18181b/ffffff?text=" + encodeURIComponent(t);
+
+        // Phone cases: price depends on the phone model (only the model name shows in the dropdown)
+        const PHONE_SIZES = [
+            { label: "iPhone 16", price: 33.99, shipping: 5.99 },
+            { label: "iPhone 16 Plus", price: 33.99, shipping: 5.99 },
+            { label: "iPhone 16 Pro", price: 33.99, shipping: 5.99 },
+            { label: "iPhone 16 Pro Max", price: 33.99, shipping: 5.99 },
+            { label: "iPhone 16e", price: 23.95, shipping: 5.99 },
+            { label: "iPhone 17", price: 33.99, shipping: 5.99 },
+            { label: "iPhone 17 Air", price: 33.99, shipping: 5.99 },
+            { label: "iPhone 17 Pro", price: 33.99, shipping: 5.99 },
+            { label: "iPhone 17 Pro Max", price: 33.99, shipping: 5.99 },
+            { label: "iPhone 17e", price: 23.27, shipping: 5.99 },
+            { label: "iPhone 18 Pro", price: 23.95, shipping: 5.99 },
+            { label: "iPhone 18 Pro Max", price: 23.95, shipping: 5.99 }
+        ];
+
+        // Apparel sizes (price depends on size; shipping is the same for every size)
+        const HOODIE_SIZES = [
+            { label: "S", price: 50.00, shipping: 8.79 },
+            { label: "M", price: 50.00, shipping: 8.79 },
+            { label: "L", price: 50.00, shipping: 8.79 },
+            { label: "XL", price: 50.00, shipping: 8.79 },
+            { label: "2XL", price: 57.00, shipping: 8.79 },
+            { label: "3XL", price: 67.00, shipping: 8.79 },
+            { label: "4XL", price: 67.00, shipping: 8.79 },
+            { label: "5XL", price: 67.00, shipping: 8.79 }
+        ];
+        const SWEATER_SIZES = [
+            { label: "S", price: 48.00, shipping: 8.79 },
+            { label: "M", price: 48.00, shipping: 8.79 },
+            { label: "L", price: 48.00, shipping: 8.79 },
+            { label: "XL", price: 48.00, shipping: 8.79 },
+            { label: "2XL", price: 52.00, shipping: 8.79 },
+            { label: "3XL", price: 57.00, shipping: 8.79 }
+        ];
+        const LONGSLEEVE_SIZES = [
+            { label: "S", price: 31.83, shipping: 4.95 },
+            { label: "M", price: 31.83, shipping: 4.95 },
+            { label: "L", price: 31.83, shipping: 4.95 },
+            { label: "XL", price: 31.83, shipping: 4.95 },
+            { label: "2XL", price: 52.00, shipping: 4.95 },
+            { label: "3XL", price: 54.00, shipping: 4.95 },
+            { label: "4XL", price: 54.00, shipping: 4.95 },
+            { label: "5XL", price: 56.00, shipping: 4.95 }
+        ];
+        const TSHIRT_SIZES = [
+            { label: "XS", price: 25.00, shipping: 4.95 },
+            { label: "S", price: 25.00, shipping: 4.95 },
+            { label: "M", price: 25.00, shipping: 4.95 },
+            { label: "L", price: 25.00, shipping: 4.95 },
+            { label: "XL", price: 25.00, shipping: 4.95 },
+            { label: "2XL", price: 28.00, shipping: 4.95 },
+            { label: "3XL", price: 35.00, shipping: 4.95 },
+            { label: "4XL", price: 35.00, shipping: 4.95 },
+            { label: "5XL", price: 37.00, shipping: 4.95 }
+        ];
+        const NEVERMIND_TEE_SIZES = [
+            { label: "S", price: 25.00, shipping: 4.95 },
+            { label: "M", price: 25.00, shipping: 4.95 },
+            { label: "L", price: 25.00, shipping: 4.95 },
+            { label: "XL", price: 25.00, shipping: 4.95 },
+            { label: "2XL", price: 29.00, shipping: 4.95 },
+            { label: "3XL", price: 35.00, shipping: 4.95 },
+            { label: "4XL", price: 38.00, shipping: 4.95 }
+        ];
+
+        // Dachshund Paw Ribbed Beanie colors (default = Black).
+        // Photos sit directly in your images folder (same place as the other product photos).
+        // If you ever move them into their own folder, put that folder name here, e.g. IMG_PATH + "Dachshund Paw Beanie/"
+        const BEANIE_IMG = IMG_PATH;
+        const beaniePh = (c) => ({
+            thumbnail: null,
+            front: ph(`${c} Beanie (Front)`),
+            back: ph(`${c} Beanie (Back)`),
+            context: ph(`${c} Beanie (Context)`)
+        });
+        const BEANIE_COLORS = [
+            { name: "Black", hex: "#111111", images: { thumbnail: null, front: BEANIE_IMG + "black_front.jpg", back: BEANIE_IMG + "black_back.jpg", context: BEANIE_IMG + "thumbnail.jpg" } },
+            { name: "Beige", hex: "#f0d6b4", images: { thumbnail: null, front: BEANIE_IMG + "beige_front.jpg", back: BEANIE_IMG + "beige_back.jpg", context: BEANIE_IMG + "beige_content.jpg" } },
+            { name: "Light Grey Melange", hex: "#b7b3ad", images: { thumbnail: null, front: BEANIE_IMG + "lightgray_front.jpg", back: BEANIE_IMG + "lightgray_back.jpg", context: BEANIE_IMG + "lightgray_content.jpg" } },
+            { name: "Mustard", hex: "#f0a30a", images: { thumbnail: null, front: BEANIE_IMG + "mustard_front.jpg", back: BEANIE_IMG + "mustard_back.jpg", context: BEANIE_IMG + "mustard_content.jpg" } },
+            { name: "Acid Green", hex: "#dffc6d", images: { thumbnail: null, front: BEANIE_IMG + "acidgreen_front.jpg", back: BEANIE_IMG + "acidgreen_back.jpg", context: BEANIE_IMG + "acidgreen_content.jpg" } },
+            { name: "Olive", hex: "#6b5f3a", images: { thumbnail: null, front: BEANIE_IMG + "olive_front.jpg", back: BEANIE_IMG + "olive_back.jpg", context: BEANIE_IMG + "olive_content.jpg" } },
+            { name: "Light Blue", hex: "#e6f3ff", images: { thumbnail: null, front: BEANIE_IMG + "lightblue_front.jpg", back: BEANIE_IMG + "lightblue_back.jpg", context: BEANIE_IMG + "lightblue_content.jpg" } },
+            { name: "Navy", hex: "#0b2a45", images: { thumbnail: null, front: BEANIE_IMG + "navy_front.jpg", back: BEANIE_IMG + "navy_back.jpg", context: BEANIE_IMG + "navy_content.jpg" } }
+        ];
+
+        // Dachshund Paw with Charm Ribbed Beanie colors (same 8 colors as the Paw beanie; default = Black).
+        // Photos sit directly in your images folder and start with "charm_".
+        const CHARM_COLORS = [
+            { name: "Black", hex: "#111111", images: { thumbnail: null, front: BEANIE_IMG + "charm_front_black.jpg", back: BEANIE_IMG + "charm_black_back.jpg", context: BEANIE_IMG + "charm_thumbnail.jpg" } },
+            { name: "Beige", hex: "#f0d6b4", images: { thumbnail: null, front: BEANIE_IMG + "charm_front_beige.jpg", back: BEANIE_IMG + "charm_back_beige.jpg", context: BEANIE_IMG + "charm_content_beige.jpg" } },
+            { name: "Light Grey Melange", hex: "#b7b3ad", images: { thumbnail: null, front: BEANIE_IMG + "charm_front_lightgreymelange.jpg", back: BEANIE_IMG + "charm_back_lightgreymelange.jpg", context: BEANIE_IMG + "charm_content_lightgreymelange.jpg" } },
+            { name: "Mustard", hex: "#f0a30a", images: { thumbnail: null, front: BEANIE_IMG + "charm_front_mustard.jpg", back: BEANIE_IMG + "charm_back_mustard.jpg", context: BEANIE_IMG + "charm_content_mustard.jpg" } },
+            { name: "Acid Green", hex: "#dffc6d", images: { thumbnail: null, front: BEANIE_IMG + "charm_front_acidgreen.jpg", back: BEANIE_IMG + "charm_back_acidgreen.jpg", context: BEANIE_IMG + "charm_content_acidgreen.jpg" } },
+            { name: "Olive", hex: "#6b5f3a", images: { thumbnail: null, front: BEANIE_IMG + "charm_front_olive.jpg", back: BEANIE_IMG + "charm_back_olive.jpg", context: BEANIE_IMG + "charm_content_olive.jpg" } },
+            { name: "Light Blue", hex: "#e6f3ff", images: { thumbnail: null, front: BEANIE_IMG + "charm_front_lightblue.jpg", back: BEANIE_IMG + "charm_back_lightblue.jpg", context: BEANIE_IMG + "charm_content_lightblue.jpg" } },
+            { name: "Navy", hex: "#0b2a45", images: { thumbnail: null, front: BEANIE_IMG + "charm_front_navy.jpg", back: BEANIE_IMG + "charm_back_navy.jpg", context: BEANIE_IMG + "charm_content_navy.jpg" } }
+        ];
+
+        // "Bye." Hoodie colors (default = White). Photos sit directly in your images folder and start with "hoodie1".
+        const BYE_HOODIE_COLORS = [
+            // White: thumbnail stays the product "Main" photo
+            { name: "White", hex: "#ffffff", images: { front: IMG_PATH + "byehoodie_whitefront.jpg", back: IMG_PATH + "hoodie1white_downup.jpg" } },
+            { name: "Ash", hex: "#e3e3e5", images: { thumbnail: null, front: IMG_PATH + "hoodie1ash_front.jpg", back: IMG_PATH + "hoodie1ash_back.jpg" } },
+            { name: "Sand", hex: "#d8c9a8", images: { thumbnail: null, front: IMG_PATH + "hoodie1sand_front.jpg", back: IMG_PATH + "hoodie1sand_back.jpg" } },
+            { name: "Sport Grey", hex: "#9ea0a3", images: { thumbnail: null, front: IMG_PATH + "hoodie1sportgray_front.jpg", back: IMG_PATH + "hoodie1sportgray_back.jpg" } },
+            { name: "Gold", hex: "#f5a81c", images: { thumbnail: null, front: IMG_PATH + "hoodie1gold_front.jpg", back: IMG_PATH + "hoodie1gold_back.jpg" } },
+            { name: "Light Blue", hex: "#cfe0f5", images: { thumbnail: null, front: IMG_PATH + "hoodie1lightblue_front.jpg", back: IMG_PATH + "hoodie1lightblue_back.jpg" } },
+            { name: "Antique Sapphire", hex: "#1d7fa6", images: { thumbnail: null, front: IMG_PATH + "hoodie1antisap_front.jpg", back: IMG_PATH + "hoodie1antisap_back.jpg" } },
+            { name: "Light Pink", hex: "#f7d4e0", images: { thumbnail: null, front: IMG_PATH + "hoodie1lightpink_front.jpg", back: IMG_PATH + "hoodie1lightpink_back.jpg" } },
+            { name: "Red", hex: "#c62831", images: { thumbnail: null, front: IMG_PATH + "hoodie1red_front.jpg", back: IMG_PATH + "hoodie1red_back.jpg" } }
+        ];
+
+        // "And Stay Away" Hoodie colors (default = White). Photo names are exactly as they sit in your images folder.
+        const STAY_AWAY_HOODIE_COLORS = [
+            { name: "White", hex: "#ffffff", images: { front: IMG_PATH + "andstayawayhoodie_whitefront.jpg", back: IMG_PATH + "hoodie1back_white.jpg" } },
+            { name: "Ash", hex: "#e3e3e5", images: { thumbnail: null, front: IMG_PATH + "hoodie1front_ash.jpg", back: IMG_PATH + "hoodie1back_ash.jpg" } },
+            { name: "Sand", hex: "#d8c9a8", images: { thumbnail: null, front: IMG_PATH + "hoodie1_sand.jpg", back: IMG_PATH + "hoodie1back_sand.jpg" } },
+            { name: "Sport Grey", hex: "#9ea0a3", images: { thumbnail: null, front: IMG_PATH + "hoodie1front_sportgreyu.jpg", back: IMG_PATH + "hoodie1back_sportgrey.jpg" } },
+            { name: "Gold", hex: "#f5a81c", images: { thumbnail: null, front: IMG_PATH + "hoodie1front_gold.jpg", back: IMG_PATH + "hoodie1back_gold.jpg" } },
+            { name: "Light Blue", hex: "#cfe0f5", images: { thumbnail: null, front: IMG_PATH + "hoodie1front_lightblue.jpg", back: IMG_PATH + "hoodie1back_lightblue.jpg" } },
+            { name: "Antique Sapphire", hex: "#1d7fa6", images: { thumbnail: null, front: IMG_PATH + "hoodie1front_antisap.jpg", back: IMG_PATH + "hoodie1back_antisap.jpg" } },
+            { name: "Light Pink", hex: "#f7d4e0", images: { thumbnail: null, front: IMG_PATH + "hoodie1front_pink.jpg", back: IMG_PATH + "hoodie1back_pink.jpg" } },
+            { name: "Red", hex: "#c62831", images: { thumbnail: null, front: IMG_PATH + "hoodie1front_red.jpg", back: IMG_PATH + "hoodie1back_red.jpg" } }
+        ];
+
+        // Coasters: one standard size
+        const COASTER_SIZE = { label: "Standard", price: 12.99, shipping: 5.89 };
+
+        const SIZE_11 = { label: "11oz", price: 11.99, shipping: 7.50 };
+        const SIZE_15 = { label: "15oz", price: 13.50, shipping: 9.50 };
+
+        // --- 1. PRODUCT DATABASE ---
+        const products = [
+            {
+                id: 1,
+                title: "404 Enthusiasm Not Found",
+                category: "ceramic",
+                categoryLabel: "Ceramic Mug",
+                price: 11.99,
+                sizes: [SIZE_11],
+                badge: "Bestseller",
+                description: "Minimalist face graphic on the front with '404: ENTHUSIASM NOT FOUND' on the back. White durable ceramic.",
+                images: {
+                    thumbnail: IMG_PATH + "404_thumbnail.jpg",
+                    front: IMG_PATH + "404_left_front_.jpg",
+                    back: IMG_PATH + "404_right_back_.jpg",
+                    context: IMG_PATH + "404_content.jpg"
+                }
+            },
+            {
+                id: 2,
+                title: "Judging Dachshund Mug",
+                category: "ceramic",
+                categoryLabel: "Ceramic Mug",
+                price: 11.99,
+                sizes: [
+                    { ...SIZE_11, images: { front: IMG_PATH + "judging_11oz_left_front_.jpg", back: IMG_PATH + "judging_11oz_right_back_.jpg", context: IMG_PATH + "judging_11oz_content.jpg" } },
+                    { ...SIZE_15, images: { front: IMG_PATH + "judging_15oz_left_front_.jpg", back: IMG_PATH + "judging_15oz_right_back_.jpg", context: IMG_PATH + "judging_15oz_content.jpg" } }
+                ],
+                badge: "Popular",
+                description: "Sassy cartoon Wiener Dog graphic with 'YES, I AM JUDGING YOUR EMAIL' printed on the reverse side. Perfect office companion.",
+                images: {
+                    thumbnail: IMG_PATH + "judging_thumbnail.jpg",
+                    front: IMG_PATH + "judging_11oz_left_front_.jpg",
+                    back: IMG_PATH + "judging_11oz_right_back_.jpg",
+                    context: IMG_PATH + "judging_11oz_content.jpg"
+                }
+            },
+            {
+                id: 3,
+                title: "Out-Of-Office Cat Mug",
+                category: "ceramic",
+                categoryLabel: "Ceramic Mug",
+                price: 11.99,
+                sizes: [
+                    { ...SIZE_11, images: { front: IMG_PATH + "outofoffice_11oz_left_front_.jpg", back: IMG_PATH + "outofoffice_11oz_right_back_.jpg" } },
+                    { ...SIZE_15, images: { front: IMG_PATH + "outofoffice_15oz_left_front_.jpg", back: IMG_PATH + "outofoffice_15oz_right_back_.jpg" } }
+                ],
+                badge: "New",
+                description: "Sarcastic orange cat illustration paired with 'CONSIDER THIS MY OUT-OF-OFFICE MESSAGE' text.",
+                images: {
+                    thumbnail: IMG_PATH + "outofoffice_thumbnail.jpg",
+                    front: IMG_PATH + "outofoffice_11oz_left_front_.jpg",
+                    back: IMG_PATH + "outofoffice_11oz_right_back_.jpg",
+                    context: IMG_PATH + "outofoffice_content.jpg"
+                }
+            },
+            {
+                id: 4,
+                title: "The Corporate Glare Mug",
+                category: "ceramic",
+                categoryLabel: "Ceramic Mug",
+                price: 11.99,
+                sizes: [SIZE_11],
+                badge: null,
+                description: "Angry line-art face paired with 'SERVE LOOKS DRINK COFFEE' printed in bold uppercase font.",
+                images: {
+                    thumbnail: IMG_PATH + "servelooks_thumbnail.jpg",
+                    front: IMG_PATH + "servelooks_left_front_.jpg",
+                    back: IMG_PATH + "servelooks_right_back_.jpg",
+                    context: IMG_PATH + "servelooks_content.jpg"
+                }
+            },
+            {
+                id: 10,
+                title: "Not Curious Mug",
+                category: "ceramic",
+                categoryLabel: "Ceramic Mug",
+                price: 11.99,
+                sizes: [SIZE_11],
+                badge: null,
+                description: "Sleepy, long-lashed glasses face on the front with 'NOT CURIOUS, NOT EVEN A LITTLE BIT.' printed on the back. White durable ceramic.",
+                images: {
+                    thumbnail: IMG_PATH + "notcurious_thumbnail.jpg",
+                    front: IMG_PATH + "notcurious_left_front_.jpg",
+                    back: IMG_PATH + "notcurious_right_back_.jpg",
+                    context: IMG_PATH + "notcurious_content.jpg"
+                }
+            },
+            {
+                id: 11,
+                title: "Syntax Error Mug",
+                category: "ceramic",
+                categoryLabel: "Ceramic Mug",
+                price: 11.99,
+                sizes: [SIZE_11],
+                badge: null,
+                description: "Sleepy, long-lashed side-eye face with a pierced brow on the front and 'function itsGiving() { console.log(\"SYNTAX ERROR\")' printed on the back. White durable ceramic.",
+                images: {
+                    thumbnail: IMG_PATH + "syntaxerror_thumbnail.jpg",
+                    front: IMG_PATH + "syntaxerror_left_front_.jpg",
+                    back: IMG_PATH + "syntaxerror_right_back_.jpg",
+                    context: IMG_PATH + "syntaxerror_contet.jpg"
+                }
+            },
+            {
+                id: 12,
+                title: "Relax Mug",
+                category: "ceramic",
+                categoryLabel: "Ceramic Mug",
+                price: 11.99,
+                sizes: [SIZE_11],
+                badge: null,
+                description: "Side-eyeing round face graphic on the front with 'RELAX, LET ME PROCESS.' printed on the back. White durable ceramic.",
+                images: {
+                    thumbnail: IMG_PATH + "relax_thumbnail.jpg",
+                    front: IMG_PATH + "relax_left_front_.jpg",
+                    back: IMG_PATH + "relax_right_back_.jpg",
+                    context: IMG_PATH + "relax_content.jpg"
+                }
+            },
+            {
+                id: 13,
+                title: "Speak Less Drink More Mug",
+                category: "ceramic",
+                categoryLabel: "Ceramic Mug",
+                price: 11.99,
+                sizes: [SIZE_11],
+                badge: null,
+                description: "Unimpressed round face graphic on the front with 'SPEAK LESS DRINK MORE' printed on the back. White durable ceramic.",
+                images: {
+                    thumbnail: IMG_PATH + "speakless_thumbnail.jpg",
+                    front: IMG_PATH + "speakless_left_front_.jpg",
+                    back: IMG_PATH + "speakless_right_back_.jpg",
+                    context: IMG_PATH + "speakless_content.jpg"
+                }
+            },
+            {
+                id: 41,
+                title: `Procrastinate Tumbler`,
+                category: "tumbler",
+                categoryLabel: "Tumbler Mug",
+                price: 17.99,
+                sizes: [{ label: `20oz`, price: 17.99, shipping: 0.00 }],
+                badge: null,
+                description: `Procrastinate Tumbler from the QUIT MUGGIN' tumbler collection. More details coming soon.`,
+                images: {
+                    thumbnail: IMG_PATH + "content.jpg",
+                    front: IMG_PATH + "procrastinate_front_.jpg",
+                    back: IMG_PATH + "procrastinate_back_.jpg",
+                    context: IMG_PATH + "content.jpg"
+                }
+            },
+            {
+                id: 8,
+                title: "Round Stamp Coaster",
+                category: "coaster",
+                categoryLabel: "Coaster",
+                price: 12.99,
+                sizes: [COASTER_SIZE],
+                badge: "Cork-Back",
+                description: "Round cork-backed drink coaster featuring circular typography: 'PLACE MUG WITHIN CIRCLE . DESIGNED WHILE FROWNING'.",
+                images: {
+                    thumbnail: IMG_PATH + "roundcoaster_thumbnail.jpg",
+                    front: IMG_PATH + "roundcoaster_front.jpg",
+                    back: IMG_PATH + "roundcoaster_back.jpg",
+                    context: IMG_PATH + "roundcoaster_content.jpg",
+                    context2: IMG_PATH + "roundcoaster_content2.jpg",
+                    context3: IMG_PATH + "roundcoaster_content3.jpg"
+                }
+            },
+            {
+                id: 9,
+                title: "Square Typography Coaster",
+                category: "coaster",
+                categoryLabel: "Coaster",
+                price: 12.99,
+                sizes: [COASTER_SIZE],
+                badge: "Cork-Back",
+                description: "Square cork-backed coaster with bold script signature: 'quit muggin' - WHY ARE YOU SMILING'.",
+                images: {
+                    thumbnail: IMG_PATH + "squarecoaster_thumbnail.jpg",
+                    front: IMG_PATH + "squarecoaster_front.jpg",
+                    back: IMG_PATH + "squarecoaster_back.jpg",
+                    context: IMG_PATH + "squarecoaster_content.jpg",
+                    context2: IMG_PATH + "squarecoaster_content2.jpg",
+                    context3: IMG_PATH + "squarecoaster_content3.jpg"
+                }
+            },
+            {
+                id: 14,
+                title: `Cooking Up Reasons Round Mousepad`,
+                category: "accessories",
+                categoryLabel: "Desktop Mat",
+                price: 17.99,
+                sizes: [{ label: `Standard`, price: 17.99, shipping: 6.19 }],
+                badge: null,
+                description: `Cooking Up Reasons Round Mousepad from the QUIT MUGGIN' accessories collection. More details coming soon.`,
+                images: {
+                    thumbnail: IMG_PATH + "cookingup_thumbnail.jpg",
+                    front: IMG_PATH + "cookingup_front.jpg",
+                    back: IMG_PATH + "cookingup_back.jpg",
+                    left: IMG_PATH + "cookingup_left.jpg",
+                    context: IMG_PATH + "cookingup_content.jpg"
+                }
+            },
+            {
+                id: 16,
+                title: `She Dachshund Paw with Charm Phone Case`,
+                category: "accessories",
+                categoryLabel: "Phone Case",
+                price: 23.27,
+                priceFrom: true,
+                chooseSize: true,
+                sizeLabelText: "Select Phone Case Size:",
+                sizes: PHONE_SIZES,
+                badge: null,
+                description: `She Dachshund Paw with Charm Phone Case from the QUIT MUGGIN' accessories collection. More details coming soon.`,
+                images: {
+                    thumbnail: IMG_PATH + "shepaw_thumbnail.jpg",
+                    front: IMG_PATH + "shepaw_front.jpg",
+                    back: IMG_PATH + "shepaw_back.jpg",
+                    context: IMG_PATH + "shepaw_content.jpg"
+                }
+            },
+            {
+                id: 17,
+                title: `"I AM LEAFING" Dachshund w. Scarf Phone Case`,
+                category: "accessories",
+                categoryLabel: "Phone Case",
+                price: 23.27,
+                priceFrom: true,
+                chooseSize: true,
+                sizeLabelText: "Select Phone Case Size:",
+                sizes: PHONE_SIZES,
+                badge: null,
+                description: `"I AM LEAFING" Dachshund w. Scarf Phone Case from the QUIT MUGGIN' accessories collection. More details coming soon.`,
+                images: {
+                    thumbnail: IMG_PATH + "iamleafing_thumbnail.jpg",
+                    front: IMG_PATH + "iamleafing_front.jpg",
+                    back: IMG_PATH + "iamleafing_back.jpg",
+                    context: IMG_PATH + "iamleafing_context.jpg"
+                }
+            },
+            {
+                id: 18,
+                title: `Dachshund Magarita Glass Hand Kiss-Cut Sticker 3" x 4"`,
+                category: "accessories",
+                categoryLabel: "Sticker",
+                price: 4.99,
+                sizes: [{ label: `3" x 4"`, price: 4.99, shipping: 4.89 }],
+                badge: null,
+                description: `Dachshund Magarita Glass Hand Kiss-Cut Sticker 3" x 4" from the QUIT MUGGIN' accessories collection. More details coming soon.`,
+                images: {
+                    thumbnail: IMG_PATH + "dachshundmag_thumbnail.jpg",
+                    front: IMG_PATH + "dachshundmag_front.jpg",
+                    context: IMG_PATH + "dachshundmag_content.jpg"
+                }
+            },
+            {
+                id: 20,
+                title: `Siamese Vinyl Kiss-Cut Sticker 3" x 4"`,
+                category: "accessories",
+                categoryLabel: "Sticker",
+                price: 4.00,
+                sizes: [{ label: `3" x 4"`, price: 4.00, shipping: 4.89 }],
+                badge: null,
+                description: `Siamese Vinyl Kiss-Cut Sticker 3" x 4" from the QUIT MUGGIN' accessories collection. More details coming soon.`,
+                images: {
+                    thumbnail: IMG_PATH + "siamese_thumbnail.jpg",
+                    front: IMG_PATH + "siamese_front.jpg",
+                    context: IMG_PATH + "siamese_content.jpg"
+                }
+            },
+            {
+                id: 21,
+                title: `Judging Dachshund 4-Piece Sticker Sheet 6" x 4"`,
+                category: "accessories",
+                categoryLabel: "Sticker",
+                price: 30.00,
+                sizes: [{ label: `6" x 4"`, price: 30.00, shipping: 5.69 }],
+                badge: null,
+                description: `Judging Dachshund 4-Piece Sticker Sheet 6" x 4" from the QUIT MUGGIN' accessories collection. More details coming soon.`,
+                images: {
+                    thumbnail: IMG_PATH + "judging4pack_thumbnail.jpg",
+                    front: IMG_PATH + "judging4pack_front.jpg",
+                    context: IMG_PATH + "judging4pack_content.jpg"
+                }
+            },
+            {
+                id: 24,
+                title: `"And Stay Away" Hoodie`,
+                category: "apparel",
+                categoryLabel: "Hoodie",
+                price: 50.00,
+                sizes: HOODIE_SIZES,
+                colors: STAY_AWAY_HOODIE_COLORS,
+                priceFrom: true,
+                chooseSize: true,
+                badge: null,
+                description: `"And Stay Away" Hoodie from the QUIT MUGGIN' apparel collection. More details coming soon.`,
+                images: {
+                    thumbnail: IMG_PATH + "andstayawaymain_pic.jpg",
+                    front: IMG_PATH + "andstayawayhoodie_whitefront.jpg"
+                }
+            },
+            {
+                id: 27,
+                title: `"Bye." Hoodie`,
+                category: "apparel",
+                categoryLabel: "Hoodie",
+                price: 50.00,
+                sizes: HOODIE_SIZES,
+                colors: BYE_HOODIE_COLORS,
+                priceFrom: true,
+                chooseSize: true,
+                badge: null,
+                description: `"Bye." Hoodie from the QUIT MUGGIN' apparel collection. More details coming soon.`,
+                images: {
+                    thumbnail: IMG_PATH + "byetheme_main.jpg",
+                    front: IMG_PATH + "byehoodie_whitefront.jpg"
+                }
+            },
+            {
+                id: 37,
+                title: `Dachshund Paw Ribbed Beanie`,
+                category: "apparel",
+                categoryLabel: "Beanie",
+                price: 28.00,
+                sizes: [{ label: `One Size`, price: 28.00, shipping: 5.09 }],
+                colors: BEANIE_COLORS,
+                badge: null,
+                description: `Dachshund Paw Ribbed Beanie from the QUIT MUGGIN' apparel collection. More details coming soon.`,
+                images: {
+                    thumbnail: BEANIE_IMG + "thumbnail.jpg",
+                    front: BEANIE_IMG + "black_front.jpg",
+                    back: BEANIE_IMG + "black_back.jpg"
+                }
+            },
+            {
+                id: 38,
+                title: `Dachshund Paw with Charm Ribbed Beanie`,
+                category: "apparel",
+                categoryLabel: "Beanie",
+                price: 28.00,
+                sizes: [{ label: `One Size`, price: 28.00, shipping: 5.09 }],
+                colors: CHARM_COLORS,
+                badge: null,
+                description: `Dachshund Paw with Charm Ribbed Beanie from the QUIT MUGGIN' apparel collection. More details coming soon.`,
+                images: {
+                    thumbnail: BEANIE_IMG + "charm_thumbnail.jpg",
+                    front: BEANIE_IMG + "charm_front_black.jpg",
+                    back: BEANIE_IMG + "charm_black_back.jpg"
+                }
+            },
+        ];
+
+        // Products without their own size list keep the original two-option dropdown.
+        // (Shipping for those hasn't been set yet.)
+        function getSizes(product) {
+            if (product.sizes) return product.sizes;
+            return [
+                { label: "11 oz Standard Mug", price: product.price, shipping: null },
+                { label: "15 oz Large Mug", price: product.price, shipping: null }
+            ];
+        }
+
+        // Photos for a product at a given size (sizes can have their own front/back/context photos)
+        function getImages(product, size, color) {
+            return { ...product.images, ...((size && size.images) || {}), ...((color && color.images) || {}) };
+        }
+
+        const categoryNames = {
+            apparel: 'Apparel',
+            accessories: 'Accessories',
+            cards: 'Cards'
+        };
+
+        let cart = [];
+        let activeFilter = 'all';
+        let currentModalProduct = null;
+
+        // --- 2. RENDER PRODUCTS ---
+        function renderProducts() {
+            const container = document.getElementById('products-container');
+            const filtered = activeFilter === 'all' 
+                ? products 
+                : products.filter(p => p.category === activeFilter);
+
+            document.getElementById('catalog-count').innerText = `${filtered.length} Items`;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center py-16 text-zinc-500 font-mono text-xs">New ${categoryNames[activeFilter] || 'items'} are coming soon. Check back for the drop!</div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(product => `
+                <div class="product-card bg-brand-card border border-brand-border/60 rounded-2xl overflow-hidden flex flex-col justify-between">
+                    <div class="relative group cursor-pointer overflow-hidden bg-zinc-900" onclick="openQuickView(${product.id})">
+                        ${product.badge ? `<span class="absolute top-3 left-3 z-10 bg-brand-accent text-white font-mono text-[10px] font-bold uppercase px-2.5 py-1 rounded shadow">${product.badge}</span>` : ''}
+                        
+                        <img src="${product.images.thumbnail || product.images.front}" alt="${product.title.replace(/"/g, '&quot;')}" class="w-full h-64 object-cover object-center group-hover:scale-105 transition duration-500">
+                        
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                            <span class="px-4 py-2 bg-brand-dark/90 text-white font-bold text-xs uppercase tracking-wider rounded-lg border border-zinc-700 shadow">
+                                Quick View
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="p-5 flex-grow flex flex-col justify-between space-y-4">
+                        <div>
+                            <span class="text-[10px] font-mono text-brand-accent uppercase tracking-widest">${product.categoryLabel}</span>
+                            <h3 class="text-lg font-bold text-white uppercase tracking-tight mt-1 hover:text-brand-accent transition cursor-pointer" onclick="openQuickView(${product.id})">
+                                ${product.title}
+                            </h3>
+                            <p class="text-zinc-400 text-xs mt-2 line-clamp-2 leading-relaxed">
+                                ${product.description}
+                            </p>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-3 border-t border-zinc-800">
+                            <span class="text-xl font-extrabold font-mono text-white">${product.priceFrom ? 'From ' : ''}$${product.price.toFixed(2)}</span>
+                            <button onclick="${product.chooseSize ? `openQuickView(${product.id})` : `addToCart(${product.id})`}" class="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-brand-accent text-white font-bold text-xs uppercase tracking-wider transition border border-zinc-700 hover:border-brand-accent">
+                                ${product.chooseSize ? 'Select Size' : 'Add To Cart'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- 3. CATEGORY FILTERING ---
+        function filterCategory(cat) {
+            activeFilter = cat;
+            
+            // Update UI buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-brand-accent', 'text-white');
+                btn.classList.add('bg-zinc-900', 'text-zinc-400');
+            });
+
+            // Re-render
+            renderProducts();
+        }
+
+        // Filter + jump down to the PRODUCT CATALOG section
+        function goToCatalog(cat) {
+            filterCategory(cat);
+            const grid = document.getElementById('product-grid');
+            if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // --- 3b. CERAMIC MUGS DROP LIST ---
+        function toggleCeramicDropdown(e) {
+            if (e) e.stopPropagation();
+            closeTumblerDropdown();
+            closeCoasterDropdown();
+            closeAccDropdown();
+            closeAppDropdown();
+            const dd = document.getElementById('ceramic-dd');
+            const btn = document.getElementById('ceramic-dd-btn');
+            const willOpen = dd.classList.contains('hidden');
+            dd.classList.toggle('hidden');
+            btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+        }
+
+        function closeCeramicDropdown() {
+            const dd = document.getElementById('ceramic-dd');
+            if (dd) dd.classList.add('hidden');
+            const btn = document.getElementById('ceramic-dd-btn');
+            if (btn) btn.setAttribute('aria-expanded', 'false');
+        }
+
+        function openCeramicItem(id) {
+            closeCeramicDropdown();
+            openQuickView(id);
+        }
+
+        function toggleCoasterDropdown(e) {
+            if (e) e.stopPropagation();
+            closeTumblerDropdown();
+            closeCeramicDropdown();
+            closeAccDropdown();
+            closeAppDropdown();
+            const dd = document.getElementById('coaster-dd');
+            const btn = document.getElementById('coaster-dd-btn');
+            const willOpen = dd.classList.contains('hidden');
+            dd.classList.toggle('hidden');
+            btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+        }
+
+        function closeCoasterDropdown() {
+            const dd = document.getElementById('coaster-dd');
+            if (dd) dd.classList.add('hidden');
+            const btn = document.getElementById('coaster-dd-btn');
+            if (btn) btn.setAttribute('aria-expanded', 'false');
+        }
+
+        function openCoasterItem(id) {
+            closeCoasterDropdown();
+            openQuickView(id);
+        }
+
+        // Tumblers drop list
+        function toggleTumblerDropdown(e) {
+            if (e) e.stopPropagation();
+            closeCeramicDropdown();
+            closeCoasterDropdown();
+            closeAccDropdown();
+            closeAppDropdown();
+            const dd = document.getElementById('tumbler-dd');
+            const btn = document.getElementById('tumbler-dd-btn');
+            const willOpen = dd.classList.contains('hidden');
+            dd.classList.toggle('hidden');
+            btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+        }
+
+        function closeTumblerDropdown() {
+            const dd = document.getElementById('tumbler-dd');
+            if (dd) dd.classList.add('hidden');
+            const btn = document.getElementById('tumbler-dd-btn');
+            if (btn) btn.setAttribute('aria-expanded', 'false');
+        }
+
+        function openTumblerItem(id) {
+            closeTumblerDropdown();
+            openQuickView(id);
+        }
+
+        function toggleMobileTumbler() {
+            document.getElementById('mobile-tumbler-list').classList.toggle('hidden');
+        }
+
+        function toggleMobileCoaster() {
+            document.getElementById('mobile-coaster-list').classList.toggle('hidden');
+        }
+
+        // Accessories: category list with a side list of products
+        function toggleAccDropdown(e) {
+            if (e) e.stopPropagation();
+            closeTumblerDropdown();
+            closeCeramicDropdown();
+            closeCoasterDropdown();
+            closeAppDropdown();
+            const dd = document.getElementById('acc-dd');
+            const btn = document.getElementById('acc-dd-btn');
+            const willOpen = dd.classList.contains('hidden');
+            closeAccSubs();
+            dd.classList.toggle('hidden');
+            btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+        }
+
+        function closeAccDropdown() {
+            closeAccSubs();
+            const dd = document.getElementById('acc-dd');
+            if (dd) dd.classList.add('hidden');
+            const btn = document.getElementById('acc-dd-btn');
+            if (btn) btn.setAttribute('aria-expanded', 'false');
+        }
+
+        function showAccSub(key) {
+            document.querySelectorAll('.acc-sub').forEach(el => el.classList.add('hidden'));
+            const sub = document.getElementById('acc-sub-' + key);
+            if (sub) sub.classList.remove('hidden');
+        }
+
+        function closeAccSubs() {
+            document.querySelectorAll('.acc-sub').forEach(el => el.classList.add('hidden'));
+        }
+
+        function openAccItem(id) {
+            closeAccDropdown();
+            openQuickView(id);
+        }
+
+        function toggleMobileAcc() {
+            document.getElementById('mobile-acc-list').classList.toggle('hidden');
+        }
+
+        function toggleMobileSub(key) {
+            document.getElementById('mobile-sub-' + key).classList.toggle('hidden');
+        }
+
+        // Apparel: category list with a side list of products
+        function toggleAppDropdown(e) {
+            if (e) e.stopPropagation();
+            closeTumblerDropdown();
+            closeCeramicDropdown();
+            closeCoasterDropdown();
+            closeAccDropdown();
+            const dd = document.getElementById('app-dd');
+            const btn = document.getElementById('app-dd-btn');
+            const willOpen = dd.classList.contains('hidden');
+            closeAppSubs();
+            dd.classList.toggle('hidden');
+            btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+        }
+
+        function closeAppDropdown() {
+            closeAppSubs();
+            const dd = document.getElementById('app-dd');
+            if (dd) dd.classList.add('hidden');
+            const btn = document.getElementById('app-dd-btn');
+            if (btn) btn.setAttribute('aria-expanded', 'false');
+        }
+
+        function showAppSub(key) {
+            document.querySelectorAll('.app-sub').forEach(el => el.classList.add('hidden'));
+            const sub = document.getElementById('app-sub-' + key);
+            if (sub) sub.classList.remove('hidden');
+        }
+
+        function closeAppSubs() {
+            document.querySelectorAll('.app-sub').forEach(el => el.classList.add('hidden'));
+        }
+
+        function openAppItem(id) {
+            closeAppDropdown();
+            openQuickView(id);
+        }
+
+        function toggleMobileApp() {
+            document.getElementById('mobile-app-list').classList.toggle('hidden');
+        }
+
+        function toggleMobileAppSub(key) {
+            document.getElementById('mobile-app-sub-' + key).classList.toggle('hidden');
+        }
+
+        function toggleMobileCeramic() {
+            document.getElementById('mobile-ceramic-list').classList.toggle('hidden');
+        }
+
+        document.addEventListener('click', function(e) {
+            const wrap = document.getElementById('ceramic-dd-wrap');
+            if (wrap && !wrap.contains(e.target)) closeCeramicDropdown();
+            const cwrap = document.getElementById('coaster-dd-wrap');
+            if (cwrap && !cwrap.contains(e.target)) closeCoasterDropdown();
+            const awrap = document.getElementById('acc-dd-wrap');
+            if (awrap && !awrap.contains(e.target)) closeAccDropdown();
+            const apwrap = document.getElementById('app-dd-wrap');
+            if (apwrap && !apwrap.contains(e.target)) closeAppDropdown();
+            const twrap = document.getElementById('tumbler-dd-wrap');
+            if (twrap && !twrap.contains(e.target)) closeTumblerDropdown();
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') { closeCeramicDropdown(); closeCoasterDropdown(); closeTumblerDropdown(); closeAccDropdown(); closeAppDropdown(); }
+        });
+
+        // --- 4. QUICK VIEW MODAL LOGIC ---
+        function openQuickView(id) {
+            const product = products.find(p => p.id === id);
+            if(!product) return;
+            currentModalProduct = product;
+
+            document.getElementById('modal-title').innerText = product.title;
+            document.getElementById('modal-category').innerText = product.categoryLabel;
+            document.getElementById('modal-desc').innerText = product.description;
+
+            document.getElementById('modal-size-label').innerText = product.sizeLabelText || 'Select Size:';
+
+            // Size dropdown (only the sizes this product comes in)
+            const sizes = getSizes(product);
+            const select = document.getElementById('modal-variant-select');
+            select.innerHTML = sizes.map((s, i) => `<option value="${i}">${s.label}</option>`).join('');
+            select.value = "0";
+
+            // Colors (only for products that come in colors)
+            const hasColors = !!product.colors;
+            document.getElementById('option-container-color').classList.toggle('hidden', !hasColors);
+            document.getElementById('modal-colors-wrap').classList.toggle('hidden', !hasColors);
+            if (hasColors) {
+                const cs = document.getElementById('modal-color-select');
+                cs.innerHTML = product.colors.map((c, i) => `<option value="${i}">${c.name}</option>`).join('');
+                cs.value = "0";
+                renderColorSwatches();
+            }
+
+            updateModalPricing();
+
+            document.getElementById('modal-add-btn').onclick = function() {
+                const idx = parseInt(document.getElementById('modal-variant-select').value, 10) || 0;
+                const cidx = product.colors ? (parseInt(document.getElementById('modal-color-select').value, 10) || 0) : 0;
+                addToCart(product.id, idx, cidx);
+                closeQuickView();
+            };
+
+            document.getElementById('quickview-modal').classList.remove('hidden');
+        }
+
+        // Updates price + shipping info when the size changes
+        function updateModalPricing() {
+            const product = currentModalProduct;
+            if (!product) return;
+            const sizes = getSizes(product);
+            const idx = parseInt(document.getElementById('modal-variant-select').value, 10) || 0;
+            const size = sizes[idx] || sizes[0];
+
+            document.getElementById('modal-price').innerText = `$${size.price.toFixed(2)}`;
+
+            const shipEl = document.getElementById('modal-shipping-text');
+            if (size.shipping === 0) {
+                shipEl.innerText = `Shipping: FREE`;
+            } else if (size.shipping !== null && size.shipping !== undefined) {
+                shipEl.innerText = `Shipping: $${size.shipping.toFixed(2)} | FREE on orders over $${FREE_SHIPPING_THRESHOLD}`;
+            } else {
+                shipEl.innerText = `Shipping info coming soon | FREE on orders over $${FREE_SHIPPING_THRESHOLD}`;
+            }
+
+            renderModalViews();
+        }
+
+        // Circular color swatches under the photo buttons (hover shows the color name)
+        function renderColorSwatches() {
+            const product = currentModalProduct;
+            if (!product || !product.colors) return;
+            const sel = parseInt(document.getElementById('modal-color-select').value, 10) || 0;
+            document.getElementById('modal-colors').innerHTML = product.colors.map((c, i) => `
+                <button type="button" onclick="selectColor(${i})" aria-label="${c.name}" class="swatch relative w-8 h-8 rounded-full border border-zinc-500 transition ${i === sel ? 'ring-2 ring-offset-2 ring-brand-accent ring-offset-zinc-900' : 'hover:ring-2 hover:ring-zinc-500 hover:ring-offset-2 hover:ring-offset-zinc-900'}" style="background:${c.hex}">
+                    <span class="swatch-tip">${c.name}</span>
+                </button>
+            `).join('');
+        }
+
+        // Picking a color (circle or dropdown) swaps in that color's photos
+        function selectColor(i) {
+            document.getElementById('modal-color-select').value = String(i);
+            renderColorSwatches();
+            renderModalViews();
+        }
+
+        // Builds the Main / Front / Back / (Left / Bottom) / Context (and Context 2 / 3 when a product has them) buttons for the selected size
+        function renderModalViews() {
+            const product = currentModalProduct;
+            if (!product) return;
+            const sizes = getSizes(product);
+            const idx = parseInt(document.getElementById('modal-variant-select').value, 10) || 0;
+            const color = product.colors ? product.colors[parseInt(document.getElementById('modal-color-select').value, 10) || 0] : null;
+            const imgs = getImages(product, sizes[idx] || sizes[0], color);
+
+            // First image shown = thumbnail (falls back to front if no thumbnail)
+            setModalImage(imgs.thumbnail || imgs.front);
+
+            const views = [];
+            if (imgs.thumbnail) views.push(['Main', imgs.thumbnail]);
+            views.push(['Front', imgs.front]);
+            if (imgs.back) views.push(['Back', imgs.back]);
+            if (imgs.left) views.push(['Left', imgs.left]);
+            if (imgs.bottom) views.push(['Bottom', imgs.bottom]);
+            if (imgs.context) views.push(['Context', imgs.context]);
+            if (imgs.context2) views.push(['Context 2', imgs.context2]);
+            if (imgs.context3) views.push(['Context 3', imgs.context3]);
+
+            document.getElementById('modal-views').innerHTML = views.map(([label, src], i) => `
+                <button onclick="switchModalImage('${src}', this)" class="modal-thumb-btn px-3 py-1.5 text-[10px] font-mono rounded ${i === 0 ? 'bg-brand-accent text-white' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'}">${label}</button>
+            `).join('');
+        }
+
+        // Sets the big photo. If a Context photo is saved under a slightly different name (content / context / trailing _), the other spellings are tried automatically.
+        function setModalImage(src) {
+            const el = document.getElementById('modal-img');
+            let alts = [];
+            if (/_(content|context|contet)_?\.jpg$/i.test(src)) {
+                const base = src.replace(/_(content|context|contet)_?\.jpg$/i, '');
+                const bases = [base, base.replace(/_(11|15)oz$/i, '')];
+                bases.forEach(b => ['_content.jpg', '_context.jpg', '_content_.jpg', '_context_.jpg', '_contet.jpg'].forEach(suf => alts.push(b + suf)));
+                alts = alts.filter((a, i) => a !== src && alts.indexOf(a) === i);
+            }
+            el.dataset.alts = JSON.stringify(alts);
+            el.src = src;
+        }
+        function modalImgFallback(el) {
+            let alts = [];
+            try { alts = JSON.parse(el.dataset.alts || '[]'); } catch (e) {}
+            if (alts.length) { const next = alts.shift(); el.dataset.alts = JSON.stringify(alts); el.src = next; }
+        }
+        function switchModalImage(imgUrl, btn) {
+            setModalImage(imgUrl);
+            document.querySelectorAll('.modal-thumb-btn').forEach(b => {
+                b.classList.remove('bg-brand-accent', 'text-white');
+                b.classList.add('bg-zinc-800', 'text-zinc-300');
+            });
+            btn.classList.remove('bg-zinc-800', 'text-zinc-300');
+            btn.classList.add('bg-brand-accent', 'text-white');
+        }
+
+        function closeQuickView() {
+            document.getElementById('quickview-modal').classList.add('hidden');
+        }
+
+        // --- 5. CART SYSTEM ---
+        function addToCart(id, sizeIndex = 0, colorIndex = 0) {
+            const product = products.find(p => p.id === id);
+            if(!product) return;
+
+            const sizes = getSizes(product);
+            const size = sizes[sizeIndex] || sizes[0];
+            const color = product.colors ? (product.colors[colorIndex] || product.colors[0]) : null;
+            const key = `${product.id}-${size.label}` + (color ? `-${color.name}` : '');
+
+            const existing = cart.find(item => item.key === key);
+            if(existing) {
+                existing.qty++;
+            } else {
+                cart.push({
+                    ...product,
+                    key: key,
+                    sizeLabel: product.sizes ? size.label : null,
+                    colorLabel: color ? color.name : null,
+                    images: getImages(product, size, color),
+                    price: size.price,
+                    shipping: size.shipping,
+                    qty: 1
+                });
+            }
+
+            updateCartUI();
+            toggleCartModal(true);
+        }
+
+        function updateCartUI() {
+            const totalItems = cart.reduce((acc, item) => acc + item.qty, 0);
+            document.getElementById('cart-count').innerText = totalItems;
+
+            const container = document.getElementById('cart-items');
+            const progressWrap = document.getElementById('shipping-progress');
+
+            if(cart.length === 0) {
+                container.innerHTML = `<div class="text-center py-12 text-zinc-500 font-mono text-xs">Your cart is empty. Go add some muggin' gear!</div>`;
+                document.getElementById('cart-subtotal').innerText = "$0.00";
+                document.getElementById('cart-shipping').innerText = "$0.00";
+                document.getElementById('cart-total').innerText = "$0.00";
+                progressWrap.classList.add('hidden');
+                return;
+            }
+
+            let subtotal = 0;
+            let shippingBeforeDiscount = 0;
+            container.innerHTML = cart.map(item => {
+                subtotal += item.price * item.qty;
+                shippingBeforeDiscount += (item.shipping || 0) * item.qty;
+                return `
+                    <div class="flex items-center justify-between bg-zinc-900 p-3 rounded-xl border border-zinc-800">
+                        <div class="flex items-center gap-3">
+                            <img src="${item.images.front}" class="w-12 h-12 object-cover rounded-lg">
+                            <div>
+                                <h4 class="text-xs font-bold text-white uppercase">${item.title}${(item.sizeLabel || item.colorLabel) ? ` <span class="text-zinc-400 font-mono normal-case">(${[item.sizeLabel, item.colorLabel].filter(Boolean).join(', ')})</span>` : ''}</h4>
+                                <span class="text-[10px] font-mono text-brand-accent">$${item.price.toFixed(2)} x ${item.qty}</span>
+                            </div>
+                        </div>
+                        <button onclick="removeFromCart('${item.key}')" class="text-zinc-500 hover:text-red-400 p-1">
+                            <i class="fa-solid fa-trash text-xs"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+
+            // Free shipping tracker: once the subtotal hits the threshold, shipping is removed automatically
+            const qualifies = Math.round(subtotal * 100) >= FREE_SHIPPING_THRESHOLD * 100;
+            const shipping = qualifies ? 0 : shippingBeforeDiscount;
+            const total = subtotal + shipping;
+
+            document.getElementById('cart-subtotal').innerText = `$${subtotal.toFixed(2)}`;
+            document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
+
+            const shipEl = document.getElementById('cart-shipping');
+            if (qualifies) {
+                shipEl.innerHTML = shippingBeforeDiscount > 0
+                    ? `<span class="line-through text-zinc-500 mr-2">$${shippingBeforeDiscount.toFixed(2)}</span><span class="text-emerald-400">FREE</span>`
+                    : `<span class="text-emerald-400">FREE</span>`;
+            } else {
+                shipEl.innerText = `$${shipping.toFixed(2)}`;
+            }
+
+            if (cart.every(item => item.shipping === 0)) {
+                progressWrap.classList.add('hidden');
+                return;
+            }
+            progressWrap.classList.remove('hidden');
+            const pct = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
+            document.getElementById('shipping-progress-bar').style.width = `${pct}%`;
+            document.getElementById('shipping-progress-text').innerText = qualifies
+                ? "You've unlocked FREE shipping!"
+                : `Add $${(FREE_SHIPPING_THRESHOLD - subtotal).toFixed(2)} more to get FREE shipping`;
+        }
+
+        function removeFromCart(key) {
+            cart = cart.filter(item => item.key !== key);
+            updateCartUI();
+        }
+
+        function toggleCartModal(forceOpen = false) {
+            const drawer = document.getElementById('cart-drawer');
+            if(forceOpen) {
+                drawer.classList.remove('hidden');
+            } else {
+                drawer.classList.toggle('hidden');
+            }
+        }
+
+        // --- STRIPE EMBEDDED CHECKOUT ---
+        // The cart sends ONLY product ids / sizes / colors / quantities. Prices and shipping are
+        // re-calculated on the Worker, so nobody can change what they pay from the browser.
+        let stripeInstance = null;
+        let embeddedCheckout = null;
+        let checkoutPaid = false;
+
+        function setCheckoutStatus(msg) {
+            const el = document.getElementById('checkout-status');
+            el.textContent = msg || '';
+            el.classList.toggle('hidden', !msg);
+        }
+
+        async function startCheckout() {
+            if (cart.length === 0) return alert('Your cart is empty!');
+            const overlay = document.getElementById('checkout-overlay');
+            const mount = document.getElementById('checkout-mount');
+            checkoutPaid = false;
+            document.getElementById('checkout-success').classList.add('hidden');
+            mount.classList.remove('hidden');
+            mount.innerHTML = '';
+            setCheckoutStatus('');
+            overlay.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+
+            if (STRIPE_PUBLISHABLE_KEY.includes('REPLACE') || CHECKOUT_API_URL.includes('REPLACE')) {
+                mount.classList.add('hidden');
+                setCheckoutStatus('Checkout is almost ready - the shop owner still needs to connect Stripe. Please check back soon!');
+                return;
+            }
+            setCheckoutStatus('Loading secure checkout...');
+            try {
+                if (!stripeInstance) stripeInstance = Stripe(STRIPE_PUBLISHABLE_KEY);
+                const payload = cart.map(i => ({ id: i.id, sizeLabel: i.sizeLabel, colorLabel: i.colorLabel, qty: i.qty }));
+                const res = await fetch(CHECKOUT_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ items: payload })
+                });
+                const data = await res.json();
+                if (!res.ok || !data.clientSecret) throw new Error(data.error || 'Could not start checkout.');
+                if (embeddedCheckout) { embeddedCheckout.destroy(); embeddedCheckout = null; }
+                embeddedCheckout = await stripeInstance.initEmbeddedCheckout({
+                    fetchClientSecret: async () => data.clientSecret,
+                    onComplete: handleCheckoutComplete
+                });
+                embeddedCheckout.mount('#checkout-mount');
+                setCheckoutStatus('');
+            } catch (err) {
+                console.error(err);
+                mount.classList.add('hidden');
+                setCheckoutStatus((err && err.message ? err.message : 'Something went wrong.') + ' Your cart is saved - please try again.');
+            }
+        }
+
+        function handleCheckoutComplete() {
+            checkoutPaid = true;
+            if (embeddedCheckout) { embeddedCheckout.destroy(); embeddedCheckout = null; }
+            const paidItems = cart.slice();
+            cart = [];
+            updateCartUI();
+            document.getElementById('cart-drawer').classList.add('hidden');
+            document.getElementById('checkout-mount').classList.add('hidden');
+            setCheckoutStatus('');
+            document.getElementById('checkout-success').classList.remove('hidden');
+            onOrderComplete(paidItems);
+        }
+
+        // Hook for later (e.g. an EmailJS notification). Stripe's Dashboard already records the full order
+        // (items, sizes, shipping address, email, phone), so nothing is required here.
+        function onOrderComplete(paidItems) {}
+
+        function closeCheckout() {
+            if (embeddedCheckout) { embeddedCheckout.destroy(); embeddedCheckout = null; }
+            document.getElementById('checkout-overlay').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        // --- 6. COUNTDOWN TIMER (NEXT WEDNESDAY 2:00 PM EST) ---
+        function startDropCountdown() {
+            function getNextWednesdayDrop() {
+                const now = new Date();
+                
+                // Get current date/time in EST/EDT
+                const estNow = new Date(now.toLocaleString("en-US", { timeZone: "America/New_York" }));
+                
+                let target = new Date(estNow);
+                target.setHours(14, 0, 0, 0); // 2:00 PM EST
+
+                let dayOfWeek = estNow.getDay(); // 0 = Sun, 3 = Wed
+                let daysUntilWed = (3 - dayOfWeek + 7) % 7;
+
+                // If today is Wednesday and past 2 PM EST, target next Wednesday
+                if (dayOfWeek === 3 && estNow.getHours() >= 14) {
+                    daysUntilWed = 7;
+                }
+
+                target.setDate(estNow.getDate() + daysUntilWed);
+
+                // Convert target back to local time difference calculation
+                const diffTime = target - estNow;
+                return new Date(Date.now() + diffTime);
+            }
+
+            let dropTargetTime = getNextWednesdayDrop();
+
+            function updateTimer() {
+                const now = new Date();
+                const distance = dropTargetTime - now;
+
+                if (distance < 0) {
+                    dropTargetTime = getNextWednesdayDrop();
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                const format = (n) => String(n).padStart(2, '0');
+
+                document.getElementById('drop-timer').innerText = 
+                    `${format(days)}d : ${format(hours)}h : ${format(minutes)}m : ${format(seconds)}s`;
+            }
+
+            updateTimer();
+            setInterval(updateTimer, 1000);
+        }
+
+        // --- 7. CAROUSEL BANNER AUTO SLIDE ---
+        let carouselIndex = 0, carouselHoldUntil = 0;
+        function startCarousel() {
+            const track = document.getElementById('carousel-track');
+            const totalSlides = 3;
+
+            setInterval(() => {
+                if (Date.now() < carouselHoldUntil) return; // paused while the Drop Schedule slide is being shown
+                carouselIndex = (carouselIndex + 1) % totalSlides;
+                track.style.transform = `translateX(-${carouselIndex * 100}%)`;
+            }, 4000);
+        }
+        // Footer "Drop Schedule": scroll to the top and show "NEXT DROP COMING SOON | Wednesdays @ 2:00 PM EST" in the top-left bar
+        function showDropSchedule() {
+            carouselIndex = 0;
+            carouselHoldUntil = Date.now() + 10000;
+            document.getElementById('carousel-track').style.transform = 'translateX(0)';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- 8. NEWSLETTER HANDLER ---
+        async function handleNewsletter(e) {
+            e.preventDefault();
+            const form = e.target, msg = document.getElementById('newsletter-msg'), btn = document.getElementById('newsletter-btn');
+            const email = document.getElementById('newsletter-email').value.trim();
+            const show = (text, ok) => {
+                msg.textContent = text;
+                msg.classList.remove('hidden', 'text-emerald-400', 'text-red-400');
+                msg.classList.add(ok ? 'text-emerald-400' : 'text-red-400');
+            };
+            if (form.website && form.website.value) return;                    // hidden spam-trap field was filled in = bot
+            if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return show('Please enter a valid email address.', false);
+            if (EMAILJS_SERVICE_ID.includes('REPLACE') || typeof emailjs === 'undefined') return show('Drop alerts are almost ready - please check back soon!', false);
+            btn.disabled = true;
+            try {
+                const when = new Date().toLocaleString('en-US', { timeZone: 'America/New_York', dateStyle: 'medium', timeStyle: 'short' }) + ' ET';
+                // Extra aliases (email / user_email / reply_to) so the template works whichever variable name it uses
+                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ALERTS, {
+                    subscriber_email: email, email: email, user_email: email, reply_to: email,
+                    signup_date: when, message: 'New Wednesday drop alert signup: ' + email + ' (' + when + ')'
+                }, { publicKey: EMAILJS_PUBLIC_KEY });
+                show("You're on the list! We'll alert you next Wednesday @ 2 PM EST.", true);
+                form.reset();
+            } catch (err) {
+                console.error('EmailJS error:', err);
+                show('Sorry, we could not sign you up right now. Please try again in a moment.', false);
+            } finally { btn.disabled = false; }
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+
+                // --- 9. THANKSGIVING THEME SWITCH ---
+        function setThanksgiving(on) {
+            document.documentElement.classList.toggle('thanksgiving', on);
+            const toggle = document.getElementById('thanksgiving-toggle');
+            if (toggle) toggle.checked = on;
+            try { localStorage.setItem('qm-thanksgiving', on ? '1' : '0'); } catch (e) {}
+        }
+
+        function showThanksgivingTip(el) {
+            const tip = document.getElementById('thanksgiving-tip');
+            const rect = el.getBoundingClientRect();
+            tip.classList.remove('hidden');
+            const width = tip.offsetWidth || 224;
+            const left = Math.max(8, Math.min(window.innerWidth - width - 8, rect.left + rect.width / 2 - width / 2));
+            tip.style.left = `${left}px`;
+            tip.style.top = `${rect.bottom + 8}px`;
+        }
+
+        function hideThanksgivingTip() {
+            document.getElementById('thanksgiving-tip').classList.add('hidden');
+        }
+
+        // Tap support for phones (no hover)
+        function toggleThanksgivingTip(el) {
+            const tip = document.getElementById('thanksgiving-tip');
+            if (tip.classList.contains('hidden')) {
+                showThanksgivingTip(el);
+            } else {
+                hideThanksgivingTip();
+            }
+        }
+
+        // --- 10. THANKSGIVING WRAPPING PAPER PRE-SALE ---
+        const PRESALE = {
+            dropAt: Date.UTC(2026, 10, 21, 13, 0, 0),   // Sat Nov 21, 2026 8:00 AM EST
+            earlyMs: 2 * 60 * 60 * 1000,                // portal early access = 2 hours before the drop
+            shipCents: 1349,                            // buyer shipping (same for every size)
+            freeShipMin: 3,                             // papers needed for FREE shipping (the deal: buy 2, get the 3rd 50% off + free shipping)
+            halfOffMin: 3,                              // papers needed before the 3rd paper is 50% off (buy 2, get the 3rd 50% off)
+            perkFrom: Date.UTC(2026, 10, 28, 5, 0, 0),  // 15% perk starts 11-28-2026 (EST midnight)
+            perkTo: Date.UTC(2026, 11, 29, 5, 0, 0),    // ...through the end of 12-28-2026
+            demoAdminPassword: "admin123",              // TEST MODE ONLY; the live database will check the password on the server
+            finishes: ["Glossy", "Matte"],
+            papers: [
+                { id: "jd", name: "Judging Dachshund", img: "pinterest_pin_judging_dachshund_thanksgiving_wrapping_paper.png",
+                  sizes: [{ id: "36", label: '30" x 36"', cents: 1399 }, { id: "72", label: '30" x 72"', cents: 1699 }] },
+                { id: "rust", name: "Rust Brown Plaid", img: "pinterest_pin_rust_brown_plaid_wrapping_paper.png",
+                  sizes: [{ id: "36", label: '30" x 36"', cents: 1399 }, { id: "72", label: '30" x 72"', cents: 1699 }, { id: "180", label: '30" x 180"', cents: 2599 }] },
+                { id: "tartan", name: "Green Brown Tartan", img: "pinterest_pin_green_brown_tartan_wrapping_paper.png",
+                  sizes: [{ id: "36", label: '30" x 36"', cents: 1399 }, { id: "72", label: '30" x 72"', cents: 1699 }, { id: "180", label: '30" x 180"', cents: 2599 }] }
+            ]
+        };
+        let psSel = {}, psOrder = [], psTimer = null;
+        const money = c => '$' + (c / 100).toFixed(2);
+        const esc = s => String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+        const psPaper = id => PRESALE.papers.find(p => p.id === id);
+
+        // Data layer. TEST MODE keeps orders in this browser only; a live database replaces these 3 methods later.
+        const presaleStore = {
+            live: false,
+            key: 'qm-presale-orders',
+            _all() { try { return JSON.parse(localStorage.getItem(this.key) || '[]'); } catch (e) { return []; } },
+            _portal(all) {
+                const abc = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+                let n;
+                do {
+                    const r = new Uint8Array(8); crypto.getRandomValues(r);
+                    const c = Array.from(r, x => abc[x % abc.length]).join('');
+                    n = `QM-${c.slice(0, 4)}-${c.slice(4)}`;
+                } while (all.some(o => o.portalNumber === n));
+                return n;
+            },
+            async create(o) {
+                const all = this._all();
+                o.orderNumber = 'QM-' + (1001 + all.length);
+                o.portalNumber = this._portal(all);
+                o.createdAt = new Date().toISOString();
+                all.push(o);
+                localStorage.setItem(this.key, JSON.stringify(all));
+                return o;
+            },
+            async byPortal(n) {
+                const k = s => String(s).toUpperCase().replace(/[^A-Z0-9]/g, '');
+                return this._all().find(o => k(o.portalNumber) === k(n)) || null;
+            },
+            async adminAll(pw) { return pw === PRESALE.demoAdminPassword ? this._all().slice().reverse() : null; }
+        };
+
+        function renderPresaleCards() {
+            document.getElementById('presale-cards').innerHTML = PRESALE.papers.map(p => `
+                <div class="bg-brand-card border border-brand-border/60 rounded-2xl overflow-hidden flex flex-col">
+                    <img src="${IMG_PATH}${p.img}" alt="${p.name} Thanksgiving wrapping paper pre-sale" class="w-full">
+                    <div class="p-4">
+                        <label class="flex items-center gap-3 cursor-pointer font-bold text-sm text-white">
+                            <input type="checkbox" class="w-5 h-5 accent-orange-500" onchange="psToggle('${p.id}', this.checked)">
+                            Add ${p.name} to my order
+                        </label>
+                        <div id="ps-opts-${p.id}" class="hidden mt-4 space-y-3">
+                            <div>
+                                <div class="text-[10px] font-mono uppercase tracking-wider text-zinc-400 mb-1">Size</div>
+                                ${p.sizes.map(s => `<label class="flex items-center justify-between gap-2 py-1 text-xs text-zinc-200 cursor-pointer"><span><input type="radio" class="mr-2 accent-orange-500" name="ps-size-${p.id}" onchange="psPick('${p.id}','size','${s.id}')">${s.label}</span><span class="font-mono text-brand-accent">${money(s.cents)}</span></label>`).join('')}
+                            </div>
+                            <div>
+                                <div class="text-[10px] font-mono uppercase tracking-wider text-zinc-400 mb-1">Finish</div>
+                                ${PRESALE.finishes.map(f => `<label class="inline-flex items-center mr-4 text-xs text-zinc-200 cursor-pointer"><input type="radio" class="mr-2 accent-orange-500" name="ps-fin-${p.id}" onchange="psPick('${p.id}','finish','${f}')">${f}</label>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>`).join('');
+        }
+
+        function psToggle(id, on) {
+            if (on) { psOrder.push(id); psSel[id] = psSel[id] || {}; }
+            else { psOrder = psOrder.filter(x => x !== id); }
+            document.getElementById('ps-opts-' + id).classList.toggle('hidden', !on);
+            psRefresh();
+        }
+        function psPick(id, k, v) { psSel[id][k] = v; psRefresh(); }
+
+        // Buy 2, get the 3rd paper 50% off + FREE shipping (3+ papers)
+        function psCalc() {
+            const items = psOrder.filter(id => psSel[id] && psSel[id].size && psSel[id].finish).map(id => {
+                const p = psPaper(id), s = p.sizes.find(x => x.id === psSel[id].size);
+                return { paperId: id, name: p.name, sizeLabel: s.label, finish: psSel[id].finish, cents: s.cents, paidCents: s.cents };
+            });
+            const pending = psOrder.length - items.length;
+            let discount = 0;
+            if (items.length >= PRESALE.halfOffMin) {
+                const last = items[2]; // the 3rd paper chosen
+                last.paidCents = Math.round(last.cents / 2);
+                discount = last.cents - last.paidCents;
+            }
+            const subtotal = items.reduce((a, i) => a + i.cents, 0);
+            const shipping = items.length === 0 ? 0 : (items.length >= PRESALE.freeShipMin ? 0 : PRESALE.shipCents);
+            return { items, pending, discount, subtotal, shipping, total: subtotal - discount + shipping };
+        }
+
+        function psRefresh() {
+            const c = psCalc(), el = document.getElementById('presale-summary');
+            if (!psOrder.length) { el.innerHTML = `<p class="text-xs font-mono text-zinc-400">Check a wrapping paper above to start your order.</p>`; return; }
+            const rows = c.items.map(i => `<div class="flex justify-between gap-3 text-xs"><span class="text-zinc-200">${i.name} • ${i.sizeLabel} • ${i.finish}</span><span class="font-mono text-white">${money(i.cents)}</span></div>`).join('');
+            const hint = c.pending ? `<p class="text-[11px] font-mono text-amber-400">Choose a size and finish for every paper you checked.</p>`
+                : (c.items.length < PRESALE.freeShipMin ? `<p class="text-[11px] font-mono text-brand-accent">${c.items.length < PRESALE.halfOffMin ? 'Buy 2 papers, get the 3rd for 50% off + FREE shipping!' : 'Add a third paper for 50% off + FREE shipping!'}</p>` : '');
+            el.innerHTML = `<div class="space-y-1.5">${rows}</div>${hint}
+                <div class="border-t border-zinc-700 pt-2 mt-2 space-y-1 text-xs font-mono">
+                    <div class="flex justify-between"><span class="text-zinc-400">Subtotal</span><span class="text-white">${money(c.subtotal)}</span></div>
+                    ${c.discount ? `<div class="flex justify-between"><span class="text-emerald-400">50% off 3rd paper</span><span class="text-emerald-400">-${money(c.discount)}</span></div>` : ''}
+                    <div class="flex justify-between"><span class="text-zinc-400">Shipping</span><span class="${c.items.length >= PRESALE.freeShipMin ? 'text-emerald-400' : 'text-white'}">${c.items.length === 0 ? '$0.00' : (c.shipping ? money(c.shipping) : 'FREE')}</span></div>
+                    <div class="flex justify-between text-sm font-bold"><span class="text-white">Total</span><span class="text-brand-accent">${money(c.total)}</span></div>
+                </div>`;
+        }
+
+        async function submitPresale() {
+            const c = psCalc(), err = document.getElementById('presale-error');
+            const name = document.getElementById('ps-name').value.trim();
+            const phone = document.getElementById('ps-phone').value.trim();
+            const email = document.getElementById('ps-email').value.trim();
+            let msg = '';
+            if (!c.items.length) msg = 'Check at least one wrapping paper and pick its size and finish.';
+            else if (c.pending) msg = 'Choose a size and finish for every paper you checked.';
+            else if (!name) msg = 'Please enter your name.';
+            else if (phone.replace(/\D/g, '').length < 10) msg = 'Please enter a valid phone number.';
+            else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) msg = 'Please enter a valid email.';
+            err.textContent = msg; err.classList.toggle('hidden', !msg);
+            if (msg) return;
+            try {
+                if (psSubmitting) return;
+                psSubmitting = true;
+                const o = await presaleStore.create({ name, phone, email, items: c.items, subtotal: c.subtotal, discount: c.discount, shipping: c.shipping, total: c.total });
+                // The order email is how the shop owner receives the order, so it has to go through before we confirm.
+                await sendPresaleEmail(o, c);
+                document.getElementById('presale-form-wrap').classList.add('hidden');
+                const t = document.getElementById('presale-thanks');
+                t.classList.remove('hidden');
+                t.innerHTML = `<h3 class="text-2xl font-black uppercase text-white">Thank you, ${esc(name.split(' ')[0])}!</h3>
+                    <p class="text-sm text-zinc-300 mt-2">Your pre-sale order <b>${esc(o.orderNumber)}</b> is in. Save your client portal number to log in:</p>
+                    <div class="my-4 text-3xl font-mono font-black tracking-widest text-brand-accent select-all">${esc(o.portalNumber)}</div>
+                    <p class="text-xs text-zinc-400 mb-2">Your portal shows your order, your early-access countdown, and your 15% future-purchase perk.</p>
+                    <p class="text-xs text-zinc-400 mb-4">We also emailed a copy of your order and portal number to <b>${esc(email)}</b>. Check your spam folder if you don't see it.</p>
+                    <button onclick="openPortal('${esc(o.portalNumber)}')" class="bg-brand-accent hover:bg-brand-accentHover text-white font-bold text-sm uppercase tracking-wider px-6 py-3 rounded-lg transition">Open my portal</button>`;
+                t.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } catch (e) { console.error(e); err.textContent = 'Sorry, we could not submit your order. Please try again in a moment.'; err.classList.remove('hidden'); }
+            finally { psSubmitting = false; }
+        }
+
+        let psSubmitting = false;
+        const fmtET = ms => new Date(ms).toLocaleString('en-US', { timeZone: 'America/New_York', weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) + ' ET';
+        // Emails the full pre-sale order (customer info, every paper with size + finish, totals, portal number) to the shop owner.
+        async function sendPresaleEmail(o, c) {
+            if (typeof emailjs === 'undefined') throw new Error('EmailJS did not load');
+            const items = c.items.map((i, n) => `${n + 1}. ${i.name} | Size: ${i.sizeLabel} | Finish: ${i.finish} | ${money(i.paidCents)}` +
+                (i.paidCents !== i.cents ? ` (50% off, regular ${money(i.cents)})` : '')).join('\n');
+            const when = new Date(o.createdAt).toLocaleString('en-US', { timeZone: 'America/New_York', dateStyle: 'medium', timeStyle: 'short' }) + ' ET';
+            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_PRESALE, {
+                order_number: o.orderNumber, portal_number: o.portalNumber,
+                customer_name: o.name, customer_phone: o.phone, customer_email: o.email, reply_to: o.email,
+                order_items: items,
+                subtotal: money(c.subtotal),
+                discount: c.discount ? '-' + money(c.discount) + ' (50% off 3rd paper)' : 'None',
+                shipping: c.items.length >= PRESALE.freeShipMin ? 'FREE' : money(c.shipping),
+                total: money(c.total), order_date: when,
+                portal_link: location.origin + location.pathname + '#portal',
+                early_access: fmtET(PRESALE.dropAt - PRESALE.earlyMs), public_drop: fmtET(PRESALE.dropAt)
+            }, { publicKey: EMAILJS_PUBLIC_KEY });
+        }
+
+        // ---- Client portal (one shared login page; each client only sees their own order) ----
+        function closeOverlays() {
+            ['presale-overlay', 'portal-overlay', 'admin-overlay', 'policy-overlay'].forEach(i => document.getElementById(i).classList.add('hidden'));
+            document.body.style.overflow = '';
+            clearInterval(psTimer);
+            if (location.hash === '#portal' || location.hash === '#admin') history.replaceState(null, '', location.pathname + location.search);
+        }
+        function openPortal(prefill) {
+            closeOverlays();
+            document.getElementById('portal-overlay').classList.remove('hidden');
+            document.getElementById('portal-login').classList.remove('hidden');
+            document.getElementById('portal-body').innerHTML = '';
+            const inp = document.getElementById('portal-number');
+            inp.value = prefill || '';
+            if (prefill) portalLogin(); else inp.focus();
+        }
+        async function portalLogin() {
+            const n = document.getElementById('portal-number').value, err = document.getElementById('portal-error');
+            const o = n.trim() ? await presaleStore.byPortal(n) : null;
+            err.classList.toggle('hidden', !!o);
+            if (!o) { err.textContent = 'We could not find that portal number. Check it and try again.'; return; }
+            document.getElementById('portal-login').classList.add('hidden');
+            const fmt = c => money(c);
+            document.getElementById('portal-body').innerHTML = `
+                <h2 class="text-2xl md:text-3xl font-black uppercase text-white">Welcome, ${esc(o.name)}</h2>
+                <p class="text-xs font-mono text-zinc-400 mt-1">Order ${esc(o.orderNumber)} • Portal ${esc(o.portalNumber)}</p>
+                <div class="mt-6 bg-brand-card border border-brand-border/60 rounded-2xl p-5 text-center">
+                    <div id="portal-cd-label" class="text-[10px] font-mono uppercase tracking-widest text-zinc-400"></div>
+                    <div id="portal-cd" class="text-3xl md:text-5xl font-mono font-black text-brand-accent my-2">--:--:--:--</div>
+                    <div class="text-xs text-zinc-400">Public drop: Sat, Nov 21, 2026 @ 8:00 AM ET • Your early access: 6:00 AM ET</div>
+                </div>
+                <div class="mt-6 bg-brand-card border border-brand-border/60 rounded-2xl p-5">
+                    <h3 class="font-bold text-white uppercase text-sm mb-3">Your pre-sale order</h3>
+                    <div class="space-y-1.5 text-xs">${o.items.map(i => `<div class="flex justify-between gap-3"><span class="text-zinc-200">${esc(i.name)} • ${esc(i.sizeLabel)} • ${esc(i.finish)}</span><span class="font-mono text-white">${fmt(i.cents)}</span></div>`).join('')}</div>
+                    <div class="border-t border-zinc-700 mt-3 pt-2 space-y-1 text-xs font-mono">
+                        <div class="flex justify-between"><span class="text-zinc-400">Subtotal</span><span>${fmt(o.subtotal)}</span></div>
+                        ${o.discount ? `<div class="flex justify-between text-emerald-400"><span>50% off 3rd paper</span><span>-${fmt(o.discount)}</span></div>` : ''}
+                        <div class="flex justify-between"><span class="text-zinc-400">Shipping</span><span>${o.shipping ? fmt(o.shipping) : 'FREE'}</span></div>
+                        <div class="flex justify-between text-sm font-bold"><span>Total</span><span class="text-brand-accent">${fmt(o.total)}</span></div>
+                    </div>
+                </div>
+                <div class="mt-6 bg-brand-card border border-brand-accent/50 rounded-2xl p-5">
+                    <h3 class="font-bold text-white uppercase text-sm">Your thank-you perk: 15% off any future purchase</h3>
+                    <p class="text-xs text-zinc-300 mt-1">Valid Nov 28, 2026 – Dec 28, 2026. <span id="portal-perk" class="font-mono text-brand-accent"></span></p>
+                </div>`;
+            const tick = () => {
+                const now = Date.now(), early = PRESALE.dropAt - PRESALE.earlyMs;
+                const target = now < early ? early : PRESALE.dropAt, d = Math.max(0, target - now);
+                const p = x => String(x).padStart(2, '0');
+                const cd = document.getElementById('portal-cd'); if (!cd) return clearInterval(psTimer);
+                cd.textContent = `${p(Math.floor(d / 864e5))}:${p(Math.floor(d % 864e5 / 36e5))}:${p(Math.floor(d % 36e5 / 6e4))}:${p(Math.floor(d % 6e4 / 1e3))}`;
+                document.getElementById('portal-cd-label').textContent = now < early ? 'Your early access opens in' : (now < PRESALE.dropAt ? 'Early access is LIVE! Public drop in' : 'The collection has dropped!');
+                document.getElementById('portal-perk').textContent = now < PRESALE.perkFrom ? '(Starts Nov 28)' : (now < PRESALE.perkTo ? '(Active now!)' : '(Expired)');
+            };
+            clearInterval(psTimer); tick(); psTimer = setInterval(tick, 1000);
+        }
+
+        // ---- Admin dashboard (open with #admin) ----
+        let adminRows = [];
+        function openAdmin() {
+            closeOverlays();
+            document.getElementById('admin-overlay').classList.remove('hidden');
+            document.getElementById('admin-login').classList.remove('hidden');
+            document.getElementById('admin-body').innerHTML = '';
+        }
+        async function adminLogin() {
+            const rows = await presaleStore.adminAll(document.getElementById('admin-pw').value);
+            const err = document.getElementById('admin-error');
+            err.classList.toggle('hidden', !!rows);
+            if (!rows) { err.textContent = 'Wrong password.'; return; }
+            adminRows = rows;
+            document.getElementById('admin-login').classList.add('hidden');
+            const rev = rows.reduce((a, o) => a + o.total, 0);
+            document.getElementById('admin-body').innerHTML = `
+                ${presaleStore.live ? '' : '<p class="text-[11px] font-mono text-amber-400 mb-3">TEST MODE: showing orders saved in this browser only.</p>'}
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                    <div class="text-sm font-mono text-zinc-300">${rows.length} pre-sale orders • ${money(rev)} total</div>
+                    <button onclick="adminCsv()" class="bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold uppercase px-4 py-2 rounded-lg">Export CSV</button>
+                </div>
+                <div class="overflow-x-auto border border-zinc-800 rounded-xl"><table class="w-full text-xs text-left">
+                    <thead class="bg-zinc-900 text-zinc-400 font-mono uppercase"><tr><th class="p-3">Date</th><th class="p-3">Order</th><th class="p-3">Portal #</th><th class="p-3">Name</th><th class="p-3">Phone</th><th class="p-3">Email</th><th class="p-3">Items</th><th class="p-3 text-right">Total</th></tr></thead>
+                    <tbody>${rows.map(o => `<tr class="border-t border-zinc-800 align-top"><td class="p-3 whitespace-nowrap">${esc(new Date(o.createdAt).toLocaleString())}</td><td class="p-3">${esc(o.orderNumber)}</td><td class="p-3 font-mono">${esc(o.portalNumber)}</td><td class="p-3">${esc(o.name)}</td><td class="p-3">${esc(o.phone)}</td><td class="p-3">${esc(o.email)}</td><td class="p-3">${o.items.map(i => `${esc(i.name)} ${esc(i.sizeLabel)} ${esc(i.finish)}`).join('<br>')}</td><td class="p-3 text-right font-mono">${money(o.total)}</td></tr>`).join('') || '<tr><td colspan="8" class="p-6 text-center text-zinc-500">No pre-sale orders yet.</td></tr>'}</tbody>
+                </table></div>`;
+        }
+        function adminCsv() {
+            const q = v => { v = String(v); if (/^[=+\-@]/.test(v)) v = "'" + v; return '"' + v.replace(/"/g, '""') + '"'; };
+            const lines = [['Date', 'Order', 'Portal', 'Name', 'Phone', 'Email', 'Items', 'Subtotal', 'Discount', 'Shipping', 'Total'].join(',')].concat(adminRows.map(o =>
+                [o.createdAt, o.orderNumber, o.portalNumber, o.name, o.phone, o.email, o.items.map(i => `${i.name} ${i.sizeLabel} ${i.finish}`).join(' | '), (o.subtotal / 100).toFixed(2), (o.discount / 100).toFixed(2), (o.shipping / 100).toFixed(2), (o.total / 100).toFixed(2)].map(q).join(',')));
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([lines.join('\n')], { type: 'text/csv' }));
+            a.download = 'presale-orders.csv'; a.click();
+        }
+        // Put your support email here (e.g. "hello@yourshop.com") and it shows as a clickable link in the Policy popup
+        const SUPPORT_EMAIL = "";
+        function openPolicy() {
+            closeOverlays();
+            if (SUPPORT_EMAIL) document.getElementById('policy-contact').innerHTML = `Have an issue with an order? Email <a class="underline text-brand-accent" href="mailto:${SUPPORT_EMAIL}">${SUPPORT_EMAIL}</a> with your order number and photos (if needed) and we'll make it right.`;
+            document.getElementById('policy-overlay').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        function openPresale() {
+            document.getElementById('presale-overlay').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOverlays(); });
+        function psRoute() {
+            if (location.hash === '#portal') openPortal();
+            else if (location.hash === '#admin') openAdmin();
+        }
+        window.addEventListener('hashchange', psRoute);
+
+        // Keeps the sticky menu directly under the top bar, even if the bar gets taller (wrapping, small screens)
+        function syncHeaderOffset() {
+            const bar = document.getElementById('top-bar'), hdr = document.querySelector('header');
+            if (bar && hdr) hdr.style.top = bar.offsetHeight + 'px';
+        }
+        window.addEventListener('resize', syncHeaderOffset);
+
+        // --- INITIALIZATION ---
+        window.onload = function() {
+            syncHeaderOffset();
+            if ('ResizeObserver' in window) new ResizeObserver(syncHeaderOffset).observe(document.getElementById('top-bar'));
+            renderProducts();
+            startDropCountdown();
+            startCarousel();
+
+            // Restore the shopper's theme choice (default = original theme)
+            let savedT = '0';
+            try { savedT = localStorage.getItem('qm-thanksgiving') || '0'; } catch (e) {}
+            if (savedT === '1') setThanksgiving(true);
+
+            // Pre-sale
+            renderPresaleCards();
+            psRefresh();
+            if (!presaleStore.live) document.getElementById('presale-test-banner').classList.remove('hidden');
+            psRoute();
+            if (location.hash !== '#portal' && location.hash !== '#admin') setTimeout(openPresale, 1500);
+        };
+    </script>
+</body>
+</html>
