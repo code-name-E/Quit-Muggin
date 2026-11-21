@@ -7,6 +7,7 @@
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="site-settings.js"></script>
     <script src="https://js.stripe.com/v3/"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4.4.1/dist/email.min.js"></script>
     <script>
@@ -534,6 +535,7 @@
                 <i class="fa-solid fa-circle-check text-5xl text-brand-accent"></i>
                 <h3 class="mt-4 text-2xl font-black uppercase text-white">Payment received!</h3>
                 <p class="mt-2 text-sm text-zinc-300 max-w-md mx-auto">Thank you for your order. A receipt is on its way to your email, and your items are made to order, so standard delivery takes 3&ndash;7 business days.</p>
+                <div id="checkout-portal" class="mt-6 max-w-md mx-auto bg-brand-card border border-brand-accent/50 rounded-2xl p-5 text-sm text-zinc-300">Getting your order number...</div>
                 <button onclick="closeCheckout()" class="mt-6 bg-brand-accent hover:bg-brand-accentHover text-white text-xs font-bold uppercase tracking-wider px-6 py-2.5 rounded-lg transition">Back to the shop</button>
             </div>
             <p class="mt-4 text-[11px] text-zinc-500 text-center"><i class="fa-solid fa-lock mr-1"></i>Payments are processed securely by Stripe. We never see or store your card details.</p>
@@ -624,7 +626,7 @@
         <div class="relative max-w-6xl mx-auto my-4 sm:my-8 px-4 sm:px-6 py-8 bg-brand-dark border border-brand-border/60 rounded-2xl shadow-2xl">
             <button onclick="closeOverlays()" aria-label="Close pre-sale" class="absolute top-3 right-4 text-zinc-400 hover:text-white text-3xl leading-none">&times;</button>
             <div class="text-center mb-8">
-                <span class="inline-block bg-brand-accent text-white font-mono text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded mb-3">Pre-Sale • Drops Sat, Nov 21 @ 8:00 AM ET</span>
+                <span id="presale-badge" class="inline-block bg-brand-accent text-white font-mono text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded mb-3">Pre-Sale</span>
                 <h2 class="text-3xl md:text-5xl font-black uppercase tracking-tight text-white">Thanksgiving Wrapping Paper Collection</h2>
                 <p class="text-brand-accent font-extrabold text-lg md:text-2xl mt-2">Buy 2, Get 1 For 50% Off + FREE Shipping</p>
                 <p class="text-xs text-zinc-400 font-mono mt-2">Pre-sale: these haven't dropped yet, so reserve yours now. <a onclick="openPortal()" class="underline cursor-pointer hover:text-white">Already ordered? Open your portal</a></p>
@@ -667,7 +669,7 @@
     <div id="admin-overlay" class="hidden fixed inset-0 z-[70] bg-brand-black overflow-y-auto">
         <div class="max-w-6xl mx-auto px-4 py-8">
             <button onclick="closeOverlays()" class="text-zinc-400 hover:text-white text-xs font-mono mb-6"><i class="fa-solid fa-arrow-left mr-1"></i> Back to shop</button>
-            <h2 class="text-2xl font-black uppercase text-white mb-4">Pre-Sale Admin</h2>
+            <h2 class="text-2xl font-black uppercase text-white mb-4">Orders &amp; Fulfillment</h2>
             <div id="admin-login" class="bg-brand-card border border-brand-border/60 rounded-2xl p-6 max-w-sm">
                 <input id="admin-pw" type="password" placeholder="Admin password" onkeydown="if(event.key==='Enter')adminLogin()" class="w-full bg-zinc-900 border border-zinc-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-accent">
                 <p id="admin-error" class="hidden text-red-400 text-xs font-mono mt-3"></p>
@@ -966,9 +968,13 @@
         const EMAILJS_SERVICE_ID = "eliannaf.ef@gmail.com";       // the Service ID shown in EmailJS > Email Services (this one is a custom ID; it is visible in the page source)
         const EMAILJS_TEMPLATE_ALERTS = "template_7jtkw6e";         // "Wednesday drop alert" signups
         const EMAILJS_TEMPLATE_PRESALE = "template_8zrdc8o";        // pre-sale orders (sent to the shop owner)
-        // --- STRIPE SETTINGS (fill these in once; see the setup steps) ---
-        const STRIPE_PUBLISHABLE_KEY = "pk_test_51UJNvy4bRx0PmTkPCbWACDfaMCTy8DjJP5yEvOV3ayj5XXp34ZHHvF2A7HVZIBWrg2QD5GnDOtDgGAM00JOVRLtz00z8Z0ombb";                        // your pk_test_... key (safe to be public). Swap for pk_live_... when you go live.
-        const CHECKOUT_API_URL = "https://quit-muggin.eliannaf-ef.workers.dev";                  // your Cloudflare Worker address
+        // Store-order confirmation email (portal number). Leave empty until you make that template, then add  EMAILJS_TEMPLATE_STORE: "template_xxxx"  to site-settings.js
+        const EMAILJS_TEMPLATE_STORE = String((window.QM_SETTINGS || {}).EMAILJS_TEMPLATE_STORE || "").trim();
+        // --- STRIPE / WORKER SETTINGS: these live in site-settings.js (next to index.html), so you only fill them in once ---
+        const QM_SETTINGS = window.QM_SETTINGS || {};
+        const STRIPE_PUBLISHABLE_KEY = String(QM_SETTINGS.STRIPE_PUBLISHABLE_KEY || "pk_test_REPLACE_ME").trim();
+        const WORKER_URL = String(QM_SETTINGS.WORKER_URL || "https://REPLACE-ME.workers.dev").trim().replace(/\/+$/, "");
+        const workerReady = () => !WORKER_URL.includes('REPLACE');
         const FREE_SHIPPING_THRESHOLD = 50; // shipping is removed automatically once the subtotal reaches this
 
         // Ceramic mug size options (price + shipping per size)
@@ -2018,6 +2024,7 @@
         let stripeInstance = null;
         let embeddedCheckout = null;
         let checkoutPaid = false;
+        let checkoutSessionId = '';
 
         function setCheckoutStatus(msg) {
             const el = document.getElementById('checkout-status');
@@ -2037,22 +2044,35 @@
             overlay.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
 
-            if (STRIPE_PUBLISHABLE_KEY.includes('REPLACE') || CHECKOUT_API_URL.includes('REPLACE')) {
+            if (STRIPE_PUBLISHABLE_KEY.includes('REPLACE') || !workerReady()) {
                 mount.classList.add('hidden');
                 setCheckoutStatus('Checkout is almost ready - the shop owner still needs to connect Stripe. Please check back soon!');
                 return;
             }
             setCheckoutStatus('Loading secure checkout...');
+            // Step 1: ask our server (the Worker) to start a Stripe checkout for this cart
+            let data;
+            checkoutSessionId = '';
             try {
-                if (!stripeInstance) stripeInstance = Stripe(STRIPE_PUBLISHABLE_KEY);
                 const payload = cart.map(i => ({ id: i.id, sizeLabel: i.sizeLabel, colorLabel: i.colorLabel, qty: i.qty }));
-                const res = await fetch(CHECKOUT_API_URL, {
+                const res = await fetch(WORKER_URL + '/checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ items: payload })
                 });
-                const data = await res.json();
+                data = await res.json().catch(() => ({}));
                 if (!res.ok || !data.clientSecret) throw new Error(data.error || 'Could not start checkout.');
+                checkoutSessionId = data.sessionId || '';
+            } catch (err) {
+                console.error('Checkout step 1 (our server) failed:', err);
+                mount.classList.add('hidden');
+                const m = err && err.message === 'Failed to fetch' ? 'We could not reach the checkout server (step 1 of 2).' : (err && err.message) || 'Something went wrong.';
+                setCheckoutStatus(m + ' Your cart is saved - please try again.');
+                return;
+            }
+            // Step 2: show Stripe's payment form
+            try {
+                if (!stripeInstance) stripeInstance = Stripe(STRIPE_PUBLISHABLE_KEY);
                 if (embeddedCheckout) { embeddedCheckout.destroy(); embeddedCheckout = null; }
                 embeddedCheckout = await stripeInstance.initEmbeddedCheckout({
                     fetchClientSecret: async () => data.clientSecret,
@@ -2061,9 +2081,9 @@
                 embeddedCheckout.mount('#checkout-mount');
                 setCheckoutStatus('');
             } catch (err) {
-                console.error(err);
+                console.error('Checkout step 2 (Stripe payment form) failed:', err);
                 mount.classList.add('hidden');
-                setCheckoutStatus((err && err.message ? err.message : 'Something went wrong.') + ' Your cart is saved - please try again.');
+                setCheckoutStatus("Stripe's payment form could not load (step 2 of 2)" + (err && err.message ? ': ' + err.message : '') + '. If you use an ad blocker or privacy extension, try turning it off for this site.');
             }
         }
 
@@ -2078,6 +2098,43 @@
             setCheckoutStatus('');
             document.getElementById('checkout-success').classList.remove('hidden');
             onOrderComplete(paidItems);
+            showStorePortalNumber(checkoutSessionId);
+        }
+
+        // After paying, fetch the order's portal number (the webhook saves the order a second or two later, so retry for a while)
+        async function showStorePortalNumber(sessionId) {
+            const box = document.getElementById('checkout-portal');
+            const fallback = "Your payment went through! If your order number doesn't show up here, don't worry: your Stripe receipt confirms it and we have your order. Contact us with your receipt and we'll send your portal number.";
+            if (!sessionId) { box.textContent = fallback; return; }
+            let order = null;
+            for (let i = 0; i < 20 && !order; i++) {
+                try {
+                    const r = await fetch(WORKER_URL + '/store/claim', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId }) });
+                    if (r.status === 200) order = (await r.json()).order;
+                } catch (e) {}
+                if (!order) await new Promise(res => setTimeout(res, 1500));
+            }
+            if (!order) { box.textContent = fallback; return; }
+            box.innerHTML = `<div class="text-[10px] font-mono uppercase tracking-widest text-zinc-400">Order ${esc(order.orderNumber)}</div>
+                <div class="text-[11px] text-zinc-400 mt-2">Your portal number (save it!)</div>
+                <div class="text-2xl font-mono font-black tracking-widest text-white my-1 select-all">${esc(order.portalNumber)}</div>
+                <p class="text-xs text-zinc-400">Use it any time to check your order status and tracking.</p>
+                <button onclick="closeCheckout(); openPortal('${esc(order.portalNumber)}')" class="mt-3 bg-brand-accent hover:bg-brand-accentHover text-white text-xs font-bold uppercase tracking-wider px-5 py-2 rounded-lg transition">Open my portal</button>`;
+            sendStoreEmail(order);
+        }
+
+        // Optional: emails the customer their portal number (only once a store-order EmailJS template is set up)
+        async function sendStoreEmail(o) {
+            if (!EMAILJS_TEMPLATE_STORE || typeof emailjs === 'undefined' || !o.email) return;
+            try {
+                const items = o.items.map((i, n) => `${n + 1}. ${i.qty} x ${i.name} | ${money(i.cents)}`).join('\n');
+                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_STORE, {
+                    order_number: o.orderNumber, portal_number: o.portalNumber, customer_name: o.name, customer_email: o.email, reply_to: o.email,
+                    order_items: items, subtotal: money(o.subtotal), shipping: o.shipping ? money(o.shipping) : 'FREE', total: money(o.total),
+                    order_date: new Date(o.createdAt).toLocaleString('en-US', { timeZone: 'America/New_York', dateStyle: 'medium', timeStyle: 'short' }) + ' ET',
+                    portal_link: location.origin + location.pathname + '#portal'
+                }, { publicKey: EMAILJS_PUBLIC_KEY });
+            } catch (e) { console.error('Store order email failed:', e); }
         }
 
         // Hook for later (e.g. an EmailJS notification). Stripe's Dashboard already records the full order
@@ -2229,7 +2286,7 @@
 
         // --- 10. THANKSGIVING WRAPPING PAPER PRE-SALE ---
         const PRESALE = {
-            dropAt: Date.UTC(2026, 10, 21, 13, 0, 0),   // Sat Nov 21, 2026 8:00 AM EST
+            dropAt: Date.UTC(2026, 10, 22, 13, 0, 0),   // THE ONLY LINE TO EDIT FOR A NEW DROP DATE. Date.UTC(year, month, day, hour, minute, second): month counts from 0 (Jan=0, Nov=10, Dec=11); time is UTC, so 8:00 AM EST = 13:00 (add 5 hours; during daylight saving, EDT, add 4). Currently Sun Nov 22, 2026 8:00 AM EST.
             earlyMs: 2 * 60 * 60 * 1000,                // portal early access = 2 hours before the drop
             shipCents: 1349,                            // buyer shipping (same for every size)
             freeShipMin: 3,                             // papers needed for FREE shipping (the deal: buy 2, get the 3rd 50% off + free shipping)
@@ -2252,10 +2309,17 @@
         const esc = s => String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
         const psPaper = id => PRESALE.papers.find(p => p.id === id);
 
-        // Data layer. TEST MODE keeps orders in this browser only; a live database replaces these 3 methods later.
+        // Data layer. Once WORKER_URL is set, orders live in your Cloudflare database (works from any device).
+        // Until then it stays in TEST MODE: orders are kept in this browser only.
         const presaleStore = {
-            live: false,
+            get live() { return workerReady(); },
             key: 'qm-presale-orders',
+            async _post(path, body) {
+                const r = await fetch(WORKER_URL + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                const d = await r.json().catch(() => ({}));
+                if (!r.ok) { const e = new Error(d.error || 'Request failed'); e.status = r.status; throw e; }
+                return d;
+            },
             _all() { try { return JSON.parse(localStorage.getItem(this.key) || '[]'); } catch (e) { return []; } },
             _portal(all) {
                 const abc = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
@@ -2268,6 +2332,7 @@
                 return n;
             },
             async create(o) {
+                if (this.live) return (await this._post('/presale', { name: o.name, phone: o.phone, email: o.email, items: o.selection })).order;
                 const all = this._all();
                 o.orderNumber = 'QM-' + (1001 + all.length);
                 o.portalNumber = this._portal(all);
@@ -2277,10 +2342,14 @@
                 return o;
             },
             async byPortal(n) {
+                if (this.live) {
+                    try { return (await this._post('/portal/lookup', { portal: n })).order || null; }
+                    catch (e) { if (e.status === 404) return null; throw e; }
+                }
                 const k = s => String(s).toUpperCase().replace(/[^A-Z0-9]/g, '');
                 return this._all().find(o => k(o.portalNumber) === k(n)) || null;
             },
-            async adminAll(pw) { return pw === PRESALE.demoAdminPassword ? this._all().slice().reverse() : null; }
+            async adminAll(pw) { return pw === PRESALE.demoAdminPassword ? this._all().slice().reverse() : null; }   // test mode only
         };
 
         function renderPresaleCards() {
@@ -2363,9 +2432,10 @@
             try {
                 if (psSubmitting) return;
                 psSubmitting = true;
-                const o = await presaleStore.create({ name, phone, email, items: c.items, subtotal: c.subtotal, discount: c.discount, shipping: c.shipping, total: c.total });
+                const selection = psOrder.map(id => ({ paperId: id, sizeId: psSel[id].size, finish: psSel[id].finish }));
+                const o = await presaleStore.create({ name, phone, email, selection, items: c.items, subtotal: c.subtotal, discount: c.discount, shipping: c.shipping, total: c.total });
                 // The order email is how the shop owner receives the order, so it has to go through before we confirm.
-                await sendPresaleEmail(o, c);
+                await sendPresaleEmail(o);
                 document.getElementById('presale-form-wrap').classList.add('hidden');
                 const t = document.getElementById('presale-thanks');
                 t.classList.remove('hidden');
@@ -2383,19 +2453,19 @@
         let psSubmitting = false;
         const fmtET = ms => new Date(ms).toLocaleString('en-US', { timeZone: 'America/New_York', weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) + ' ET';
         // Emails the full pre-sale order (customer info, every paper with size + finish, totals, portal number) to the shop owner.
-        async function sendPresaleEmail(o, c) {
+        async function sendPresaleEmail(o) {
             if (typeof emailjs === 'undefined') throw new Error('EmailJS did not load');
-            const items = c.items.map((i, n) => `${n + 1}. ${i.name} | Size: ${i.sizeLabel} | Finish: ${i.finish} | ${money(i.paidCents)}` +
+            const items = o.items.map((i, n) => `${n + 1}. ${i.name} | Size: ${i.sizeLabel} | Finish: ${i.finish} | ${money(i.paidCents)}` +
                 (i.paidCents !== i.cents ? ` (50% off, regular ${money(i.cents)})` : '')).join('\n');
             const when = new Date(o.createdAt).toLocaleString('en-US', { timeZone: 'America/New_York', dateStyle: 'medium', timeStyle: 'short' }) + ' ET';
             await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_PRESALE, {
                 order_number: o.orderNumber, portal_number: o.portalNumber,
                 customer_name: o.name, customer_phone: o.phone, customer_email: o.email, reply_to: o.email,
                 order_items: items,
-                subtotal: money(c.subtotal),
-                discount: c.discount ? '-' + money(c.discount) + ' (50% off 3rd paper)' : 'None',
-                shipping: c.items.length >= PRESALE.freeShipMin ? 'FREE' : money(c.shipping),
-                total: money(c.total), order_date: when,
+                subtotal: money(o.subtotal),
+                discount: o.discount ? '-' + money(o.discount) + ' (50% off 3rd paper)' : 'None',
+                shipping: o.shipping ? money(o.shipping) : 'FREE',
+                total: money(o.total), order_date: when,
                 portal_link: location.origin + location.pathname + '#portal',
                 early_access: fmtET(PRESALE.dropAt - PRESALE.earlyMs), public_drop: fmtET(PRESALE.dropAt)
             }, { publicKey: EMAILJS_PUBLIC_KEY });
@@ -2419,10 +2489,13 @@
         }
         async function portalLogin() {
             const n = document.getElementById('portal-number').value, err = document.getElementById('portal-error');
-            const o = n.trim() ? await presaleStore.byPortal(n) : null;
+            let o = null;
+            try { o = n.trim() ? await presaleStore.byPortal(n) : null; }
+            catch (e) { err.textContent = 'We could not reach the server. Please try again in a moment.'; err.classList.remove('hidden'); return; }
             err.classList.toggle('hidden', !!o);
             if (!o) { err.textContent = 'We could not find that portal number. Check it and try again.'; return; }
             document.getElementById('portal-login').classList.add('hidden');
+            if (o.kind === 'store') { clearInterval(psTimer); return renderStorePortal(o); }
             const fmt = c => money(c);
             document.getElementById('portal-body').innerHTML = `
                 <h2 class="text-2xl md:text-3xl font-black uppercase text-white">Welcome, ${esc(o.name)}</h2>
@@ -2430,7 +2503,7 @@
                 <div class="mt-6 bg-brand-card border border-brand-border/60 rounded-2xl p-5 text-center">
                     <div id="portal-cd-label" class="text-[10px] font-mono uppercase tracking-widest text-zinc-400"></div>
                     <div id="portal-cd" class="text-3xl md:text-5xl font-mono font-black text-brand-accent my-2">--:--:--:--</div>
-                    <div class="text-xs text-zinc-400">Public drop: Sat, Nov 21, 2026 @ 8:00 AM ET • Your early access: 6:00 AM ET</div>
+                    <div class="text-xs text-zinc-400">Public drop: ${fmtET(PRESALE.dropAt)} • Your early access: ${fmtET(PRESALE.dropAt - PRESALE.earlyMs)}</div>
                 </div>
                 <div class="mt-6 bg-brand-card border border-brand-border/60 rounded-2xl p-5">
                     <h3 class="font-bold text-white uppercase text-sm mb-3">Your pre-sale order</h3>
@@ -2458,8 +2531,39 @@
             clearInterval(psTimer); tick(); psTimer = setInterval(tick, 1000);
         }
 
-        // ---- Admin dashboard (open with #admin) ----
-        let adminRows = [];
+        // Portal view for regular (Stripe) store orders: status tracker, items, totals, where it's going
+        function renderStorePortal(o) {
+            const steps = [['new', 'Order received'], ['in_production', 'In production'], ['shipped', 'Shipped'], ['delivered', 'Delivered']];
+            const at = Math.max(0, steps.findIndex(x => x[0] === o.status));
+            const tracker = steps.map((x, i) => `<div class="flex-1 text-center">
+                    <div class="mx-auto w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${i <= at ? 'bg-brand-accent text-white' : 'bg-zinc-800 text-zinc-500'}">${i < at ? '<i class="fa-solid fa-check"></i>' : i + 1}</div>
+                    <div class="mt-2 text-[10px] font-mono uppercase tracking-wider ${i <= at ? 'text-white' : 'text-zinc-500'}">${x[1]}</div></div>`).join('');
+            const st = o.shipTo || {};
+            const where = [st.name, [st.city, st.state].filter(Boolean).join(', ') + (st.zip ? ' ' + st.zip : '')].filter(x => x && x.trim()).join(' • ');
+            document.getElementById('portal-body').innerHTML = `
+                <h2 class="text-2xl md:text-3xl font-black uppercase text-white">Welcome, ${esc(o.name)}</h2>
+                <p class="text-xs font-mono text-zinc-400 mt-1">Order ${esc(o.orderNumber)} • Portal ${esc(o.portalNumber)} • Placed ${esc(new Date(o.createdAt).toLocaleDateString())}</p>
+                <div class="mt-6 bg-brand-card border border-brand-border/60 rounded-2xl p-5">
+                    <h3 class="font-bold text-white uppercase text-sm mb-4">Order status</h3>
+                    <div class="flex items-start gap-1">${tracker}</div>
+                    ${o.note ? `<p class="mt-4 text-xs text-zinc-200 font-mono bg-zinc-900 rounded-lg px-3 py-2"><span class="text-zinc-500">Update / tracking:</span> ${esc(o.note)}</p>` : ''}
+                    <p class="mt-3 text-[11px] text-zinc-500">Items are made to order. Standard delivery takes 3&ndash;7 business days.</p>
+                </div>
+                <div class="mt-6 bg-brand-card border border-brand-border/60 rounded-2xl p-5">
+                    <h3 class="font-bold text-white uppercase text-sm mb-3">Your order</h3>
+                    <div class="space-y-1.5 text-xs">${o.items.map(i => `<div class="flex justify-between gap-3"><span class="text-zinc-200">${i.qty} &times; ${esc(i.name)}</span><span class="font-mono text-white">${money(i.cents)}</span></div>`).join('')}</div>
+                    <div class="border-t border-zinc-700 mt-3 pt-2 space-y-1 text-xs font-mono">
+                        <div class="flex justify-between"><span class="text-zinc-400">Subtotal</span><span>${money(o.subtotal)}</span></div>
+                        <div class="flex justify-between"><span class="text-zinc-400">Shipping</span><span>${o.shipping ? money(o.shipping) : 'FREE'}</span></div>
+                        <div class="flex justify-between text-sm font-bold"><span>Total</span><span class="text-brand-accent">${money(o.total)}</span></div>
+                    </div>
+                    ${where ? `<p class="mt-4 text-[11px] text-zinc-400"><span class="font-mono uppercase text-zinc-500">Shipping to</span> ${esc(where)}</p>` : ''}
+                </div>`;
+        }
+
+        // ---- Admin dashboard (open with #admin): pre-sale + store orders, fulfillment status, tracking notes ----
+        const ADMIN_STATUSES = [['new', 'New'], ['in_production', 'In production'], ['shipped', 'Shipped'], ['delivered', 'Delivered']];
+        let adminOrders = [], adminPw = '', adminKind = 'store', adminFilter = 'open';
         function openAdmin() {
             closeOverlays();
             document.getElementById('admin-overlay').classList.remove('hidden');
@@ -2467,31 +2571,92 @@
             document.getElementById('admin-body').innerHTML = '';
         }
         async function adminLogin() {
-            const rows = await presaleStore.adminAll(document.getElementById('admin-pw').value);
-            const err = document.getElementById('admin-error');
-            err.classList.toggle('hidden', !!rows);
-            if (!rows) { err.textContent = 'Wrong password.'; return; }
-            adminRows = rows;
+            const pw = document.getElementById('admin-pw').value, err = document.getElementById('admin-error');
+            let orders = null;
+            try {
+                if (presaleStore.live) {
+                    const r = await fetch(WORKER_URL + '/admin/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: pw }) });
+                    if (r.status !== 401) { if (!r.ok) throw new Error('server'); orders = (await r.json()).orders; }
+                } else {
+                    const rows = await presaleStore.adminAll(pw);
+                    orders = rows && rows.map((o, i) => ({ ...o, kind: 'presale', id: i + 1, status: 'new', note: '' }));
+                }
+            } catch (e) { err.textContent = 'Could not reach the server. Please try again.'; err.classList.remove('hidden'); return; }
+            err.classList.toggle('hidden', !!orders);
+            if (!orders) { err.textContent = 'Wrong password.'; return; }
+            adminPw = pw; adminOrders = orders;
             document.getElementById('admin-login').classList.add('hidden');
-            const rev = rows.reduce((a, o) => a + o.total, 0);
+            adminRender();
+        }
+        const adminAddr = a => a ? [a.line1, a.line2, [a.city, a.state].filter(Boolean).join(', ') + (a.postal_code ? ' ' + a.postal_code : ''), a.country].filter(x => x && String(x).trim()).join(', ') : '';
+        function adminVisible() {
+            return adminOrders.filter(o => (adminKind === 'all' || o.kind === adminKind) &&
+                (adminFilter === 'all' || (adminFilter === 'open' ? (o.status === 'new' || o.status === 'in_production') : o.status === adminFilter)));
+        }
+        function adminSet(kind, filter) { if (kind) adminKind = kind; if (filter) adminFilter = filter; adminRender(); }
+        function adminRender() {
+            const live = presaleStore.live, rows = adminVisible();
+            const count = (k, st) => adminOrders.filter(o => (k === 'all' || o.kind === k) && (!st || o.status === st)).length;
+            const pill = (on, label, fn) => `<button onclick="${fn}" class="px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border ${on ? 'bg-brand-accent border-brand-accent text-white' : 'border-zinc-700 text-zinc-300 hover:border-zinc-500'}">${label}</button>`;
+            const kinds = [['store', 'Store orders'], ['presale', 'Pre-sale'], ['all', 'All']].map(([k, l]) => pill(adminKind === k, `${l} (${count(k)})`, `adminSet('${k}')`)).join('');
+            const filters = [['open', 'To do'], ...ADMIN_STATUSES, ['all', 'Everything']].map(([k, l]) => pill(adminFilter === k, l, `adminSet(null,'${k}')`)).join('');
+            const cards = rows.map(o => {
+                const isStore = o.kind === 'store', k = o.kind + '-' + o.id;
+                const items = o.items.map(i => isStore ? `${i.qty} &times; ${esc(i.name)}` : `${esc(i.name)} &bull; ${esc(i.sizeLabel)} &bull; ${esc(i.finish)}${i.paidCents !== i.cents ? ' (50% off)' : ''}`).join('<br>');
+                const addr = isStore ? adminAddr(o.address) : '';
+                const controls = live ? `
+                    <div class="flex flex-wrap items-center gap-2 mt-3">
+                        <select id="st-${k}" class="bg-zinc-900 border border-zinc-700 text-white text-xs rounded-lg px-2 py-2">${ADMIN_STATUSES.map(([v, l]) => `<option value="${v}"${o.status === v ? ' selected' : ''}>${l}</option>`).join('')}</select>
+                        <input id="nt-${k}" value="${esc(o.note || '')}" maxlength="500" placeholder="Tracking # / note" class="flex-1 min-w-[160px] bg-zinc-900 border border-zinc-700 text-white text-xs rounded-lg px-3 py-2">
+                        <button onclick="adminSave('${o.kind}', ${Number(o.id)})" class="bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold uppercase px-4 py-2 rounded-lg">Save</button>
+                        <span id="sv-${k}" class="text-[11px] font-mono text-emerald-400"></span>
+                    </div>` : '';
+                return `<div class="bg-brand-card border border-brand-border/60 rounded-2xl p-4">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex items-center gap-2"><span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase ${isStore ? 'bg-sky-500/20 text-sky-300' : 'bg-brand-accent/20 text-brand-accent'}">${isStore ? 'Store' : 'Pre-sale'}</span>
+                            <span class="font-mono font-bold text-white text-sm">${esc(o.orderNumber)}</span>
+                            ${o.portalNumber ? `<span class="font-mono text-[11px] text-zinc-400">Portal ${esc(o.portalNumber)}</span>` : ''}</div>
+                        <div class="text-[11px] font-mono text-zinc-400">${esc(new Date(o.createdAt).toLocaleString())}</div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4 mt-3 text-xs">
+                        <div class="text-zinc-300 leading-relaxed"><div class="font-bold text-white">${esc(o.name)}</div>${o.email ? esc(o.email) + '<br>' : ''}${o.phone ? esc(o.phone) : ''}${isStore ? `<div class="mt-2 text-[10px] font-mono uppercase text-zinc-500">Ship to</div>${esc(o.shipName || o.name)}<br>${esc(addr) || '<span class="text-amber-400">no address on file</span>'}` : '<div class="mt-2 text-[11px] text-zinc-500">No shipping address collected for pre-sale orders.</div>'}</div>
+                        <div class="text-zinc-200 leading-relaxed">${items}<div class="mt-2 font-mono text-[11px] text-zinc-400">Subtotal ${money(o.subtotal)}${o.discount ? ' &bull; Discount -' + money(o.discount) : ''} &bull; Shipping ${o.shipping ? money(o.shipping) : 'FREE'} &bull; <b class="text-white">Total ${money(o.total)}</b></div></div>
+                    </div>${controls}</div>`;
+            }).join('');
             document.getElementById('admin-body').innerHTML = `
-                ${presaleStore.live ? '' : '<p class="text-[11px] font-mono text-amber-400 mb-3">TEST MODE: showing orders saved in this browser only.</p>'}
-                <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
-                    <div class="text-sm font-mono text-zinc-300">${rows.length} pre-sale orders • ${money(rev)} total</div>
-                    <button onclick="adminCsv()" class="bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold uppercase px-4 py-2 rounded-lg">Export CSV</button>
+                ${live ? '' : '<p class="text-[11px] font-mono text-amber-400 mb-3">TEST MODE: showing pre-sale orders saved in this browser only. Fulfillment tracking and store orders switch on once the Cloudflare database is connected.</p>'}
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                    <div class="text-sm font-mono text-zinc-300">${count('all', 'new')} new &bull; ${count('all', 'in_production')} in production &bull; ${count('all', 'shipped')} shipped</div>
+                    <button onclick="adminCsv()" class="bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold uppercase px-4 py-2 rounded-lg">Export CSV (${rows.length})</button>
                 </div>
-                <div class="overflow-x-auto border border-zinc-800 rounded-xl"><table class="w-full text-xs text-left">
-                    <thead class="bg-zinc-900 text-zinc-400 font-mono uppercase"><tr><th class="p-3">Date</th><th class="p-3">Order</th><th class="p-3">Portal #</th><th class="p-3">Name</th><th class="p-3">Phone</th><th class="p-3">Email</th><th class="p-3">Items</th><th class="p-3 text-right">Total</th></tr></thead>
-                    <tbody>${rows.map(o => `<tr class="border-t border-zinc-800 align-top"><td class="p-3 whitespace-nowrap">${esc(new Date(o.createdAt).toLocaleString())}</td><td class="p-3">${esc(o.orderNumber)}</td><td class="p-3 font-mono">${esc(o.portalNumber)}</td><td class="p-3">${esc(o.name)}</td><td class="p-3">${esc(o.phone)}</td><td class="p-3">${esc(o.email)}</td><td class="p-3">${o.items.map(i => `${esc(i.name)} ${esc(i.sizeLabel)} ${esc(i.finish)}`).join('<br>')}</td><td class="p-3 text-right font-mono">${money(o.total)}</td></tr>`).join('') || '<tr><td colspan="8" class="p-6 text-center text-zinc-500">No pre-sale orders yet.</td></tr>'}</tbody>
-                </table></div>`;
+                <div class="flex flex-wrap gap-2 mb-2">${kinds}</div>
+                <div class="flex flex-wrap gap-2 mb-5">${filters}</div>
+                <div class="space-y-3">${cards || '<p class="text-sm text-zinc-400 font-mono">Nothing here right now.</p>'}</div>`;
+        }
+        async function adminSave(kind, id) {
+            const k = kind + '-' + id, msg = document.getElementById('sv-' + k);
+            const status = document.getElementById('st-' + k).value, note = document.getElementById('nt-' + k).value;
+            msg.className = 'text-[11px] font-mono text-zinc-400'; msg.textContent = 'Saving...';
+            try {
+                const r = await fetch(WORKER_URL + '/admin/update', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: adminPw, kind, id, status, note }) });
+                if (!r.ok) throw new Error('save failed');
+                const o = adminOrders.find(x => x.kind === kind && x.id === id);
+                if (o) { o.status = status; o.note = note; }
+                msg.className = 'text-[11px] font-mono text-emerald-400'; msg.textContent = 'Saved';
+            } catch (e) { msg.className = 'text-[11px] font-mono text-red-400'; msg.textContent = 'Could not save - try again'; }
         }
         function adminCsv() {
-            const q = v => { v = String(v); if (/^[=+\-@]/.test(v)) v = "'" + v; return '"' + v.replace(/"/g, '""') + '"'; };
-            const lines = [['Date', 'Order', 'Portal', 'Name', 'Phone', 'Email', 'Items', 'Subtotal', 'Discount', 'Shipping', 'Total'].join(',')].concat(adminRows.map(o =>
-                [o.createdAt, o.orderNumber, o.portalNumber, o.name, o.phone, o.email, o.items.map(i => `${i.name} ${i.sizeLabel} ${i.finish}`).join(' | '), (o.subtotal / 100).toFixed(2), (o.discount / 100).toFixed(2), (o.shipping / 100).toFixed(2), (o.total / 100).toFixed(2)].map(q).join(',')));
+            const q = v => { v = String(v == null ? '' : v); if (/^[=+\-@]/.test(v)) v = "'" + v; return '"' + v.replace(/"/g, '""') + '"'; };
+            const head = ['Type', 'Date', 'Order', 'Portal', 'Name', 'Email', 'Phone', 'Ship to', 'Items', 'Subtotal', 'Discount', 'Shipping', 'Total', 'Status', 'Note'];
+            const lines = [head.map(q).join(',')].concat(adminVisible().map(o => [
+                o.kind, o.createdAt, o.orderNumber, o.portalNumber || '', o.name, o.email, o.phone,
+                o.kind === 'store' ? (o.shipName || o.name) + ', ' + adminAddr(o.address) : '',
+                o.items.map(i => o.kind === 'store' ? `${i.qty}x ${i.name}` : `${i.name} ${i.sizeLabel} ${i.finish}`).join(' | '),
+                (o.subtotal / 100).toFixed(2), (o.discount / 100).toFixed(2), (o.shipping / 100).toFixed(2), (o.total / 100).toFixed(2), o.status, o.note || ''
+            ].map(q).join(',')));
             const a = document.createElement('a');
             a.href = URL.createObjectURL(new Blob([lines.join('\n')], { type: 'text/csv' }));
-            a.download = 'presale-orders.csv'; a.click();
+            a.download = 'orders.csv'; a.click();
         }
         // Put your support email here (e.g. "hello@yourshop.com") and it shows as a clickable link in the Policy popup
         const SUPPORT_EMAIL = "";
@@ -2536,6 +2701,7 @@
             renderPresaleCards();
             psRefresh();
             if (!presaleStore.live) document.getElementById('presale-test-banner').classList.remove('hidden');
+            document.getElementById('presale-badge').textContent = 'Pre-Sale • Drops ' + fmtET(PRESALE.dropAt).replace(/, (\d)/, ' @ $1');
             psRoute();
             if (location.hash !== '#portal' && location.hash !== '#admin') setTimeout(openPresale, 1500);
         };
