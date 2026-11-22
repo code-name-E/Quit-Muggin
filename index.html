@@ -972,8 +972,8 @@
         const EMAILJS_TEMPLATE_STORE = String((window.QM_SETTINGS || {}).EMAILJS_TEMPLATE_STORE || "").trim();
         // --- STRIPE / WORKER SETTINGS: these live in site-settings.js (next to index.html), so you only fill them in once ---
         const QM_SETTINGS = window.QM_SETTINGS || {};
-        const STRIPE_PUBLISHABLE_KEY = String(QM_SETTINGS.STRIPE_PUBLISHABLE_KEY || "pk_test_REPLACE_ME").trim();
-        const WORKER_URL = String(QM_SETTINGS.WORKER_URL || "https://REPLACE-ME.workers.dev").trim().replace(/\/+$/, "");
+        const STRIPE_PUBLISHABLE_KEY = String(QM_SETTINGS.STRIPE_PUBLISHABLE_KEY || "pk_live_51UJNuk6Fj8Emzg6I9ybBbxiR1Dpfh7JiNG5Qq2xVYztjtY8lUGuPdJzLXf3i0vSP3FogzoaNVffb4b3NTRBSx1DV0058Iak0bK").trim();
+        const WORKER_URL = String(QM_SETTINGS.WORKER_URL || "https://quit-muggin.eliannaf-ef.workers.dev").trim().replace(/\/+$/, "");
         const workerReady = () => !WORKER_URL.includes('REPLACE');
         const FREE_SHIPPING_THRESHOLD = 50; // shipping is removed automatically once the subtotal reaches this
 
