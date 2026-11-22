@@ -1518,7 +1518,7 @@
                     <div class="relative group cursor-pointer overflow-hidden bg-zinc-900" onclick="openQuickView(${product.id})">
                         ${product.badge ? `<span class="absolute top-3 left-3 z-10 bg-brand-accent text-white font-mono text-[10px] font-bold uppercase px-2.5 py-1 rounded shadow">${product.badge}</span>` : ''}
                         
-                        <img src="${product.images.thumbnail || product.images.front}" alt="${product.title.replace(/"/g, '&quot;')}" class="w-full h-64 object-cover object-center group-hover:scale-105 transition duration-500">
+                        <img src="${product.images.thumbnail || product.images.front}" alt="${product.title.replace(/"/g, '&quot;')}" loading="lazy" decoding="async" class="w-full h-64 object-cover object-center group-hover:scale-105 transition duration-500">
                         
                         <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                             <span class="px-4 py-2 bg-brand-dark/90 text-white font-bold text-xs uppercase tracking-wider rounded-lg border border-zinc-700 shadow">
@@ -2286,7 +2286,7 @@
 
         // --- 10. THANKSGIVING WRAPPING PAPER PRE-SALE ---
         const PRESALE = {
-            dropAt: Date.UTC(2026, 10, 22, 13, 0, 0),   // THE ONLY LINE TO EDIT FOR A NEW DROP DATE. Date.UTC(year, month, day, hour, minute, second): month counts from 0 (Jan=0, Nov=10, Dec=11); time is UTC, so 8:00 AM EST = 13:00 (add 5 hours; during daylight saving, EDT, add 4). Currently Sun Nov 22, 2026 8:00 AM EST.
+            dropAt: Date.UTC(2026, 10, 23, 1, 0, 0),   // THE ONLY LINE TO EDIT FOR A NEW DROP DATE. Date.UTC(year, month, day, hour, minute, second): month counts from 0 (Jan=0, Nov=10, Dec=11); time is UTC, so add 5 hours to Eastern time (EST) or 4 during daylight saving (EDT), and it can roll into the next day. Currently Sun Nov 22, 2026 8:00 PM EST = Nov 23 01:00 UTC.
             earlyMs: 2 * 60 * 60 * 1000,                // portal early access = 2 hours before the drop
             shipCents: 1349,                            // buyer shipping (same for every size)
             freeShipMin: 3,                             // papers needed for FREE shipping (the deal: buy 2, get the 3rd 50% off + free shipping)
@@ -2355,7 +2355,7 @@
         function renderPresaleCards() {
             document.getElementById('presale-cards').innerHTML = PRESALE.papers.map(p => `
                 <div class="bg-brand-card border border-brand-border/60 rounded-2xl overflow-hidden flex flex-col">
-                    <img src="${IMG_PATH}${p.img}" alt="${p.name} Thanksgiving wrapping paper pre-sale" class="w-full">
+                    <img src="${IMG_PATH}${p.img}" alt="${p.name} Thanksgiving wrapping paper pre-sale" class="w-full" fetchpriority="high" decoding="async">
                     <div class="p-4">
                         <label class="flex items-center gap-3 cursor-pointer font-bold text-sm text-white">
                             <input type="checkbox" class="w-5 h-5 accent-orange-500" onchange="psToggle('${p.id}', this.checked)">
@@ -2685,16 +2685,18 @@
         window.addEventListener('resize', syncHeaderOffset);
 
         // --- INITIALIZATION ---
-        window.onload = function() {
+        const initSite = function() {
             syncHeaderOffset();
             if ('ResizeObserver' in window) new ResizeObserver(syncHeaderOffset).observe(document.getElementById('top-bar'));
             renderProducts();
             startDropCountdown();
             startCarousel();
 
-            // Restore the shopper's theme choice (default = original theme)
-            let savedT = '0';
-            try { savedT = localStorage.getItem('qm-thanksgiving') || '0'; } catch (e) {}
+            // Theme: new visitors start in the Thanksgiving theme (set THANKSGIVING_DEFAULT to false after the season).
+            // If a shopper flips the switch, their choice is remembered for next time.
+            const THANKSGIVING_DEFAULT = true;
+            let savedT = THANKSGIVING_DEFAULT ? '1' : '0';
+            try { const v = localStorage.getItem('qm-thanksgiving'); if (v !== null) savedT = v; } catch (e) {}
             if (savedT === '1') setThanksgiving(true);
 
             // Pre-sale
@@ -2703,8 +2705,10 @@
             if (!presaleStore.live) document.getElementById('presale-test-banner').classList.remove('hidden');
             document.getElementById('presale-badge').textContent = 'Pre-Sale • Drops ' + fmtET(PRESALE.dropAt).replace(/, (\d)/, ' @ $1');
             psRoute();
-            if (location.hash !== '#portal' && location.hash !== '#admin') setTimeout(openPresale, 1500);
+            if (location.hash !== '#portal' && location.hash !== '#admin') setTimeout(openPresale, 400);
         };
+        // Run right away (not on window.onload, which waits for every image on the page to download, so the pre-sale popup was slow to appear)
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initSite); else initSite();
     </script>
 </body>
 </html>

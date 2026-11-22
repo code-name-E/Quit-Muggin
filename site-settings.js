@@ -8,7 +8,7 @@
 // ============================================================================
 window.QM_SETTINGS = {
   // Stripe publishable key (Stripe -> Developers -> API keys). Safe to be public.
-  STRIPE_PUBLISHABLE_KEY: "pk_test_51UJNvy4bRx0PmTkPCbWACDfaMCTy8DjJP5yEvOV3ayj5XXp34ZHHvF2A7HVZIBWrg2QD5GnDOtDgGAM00JOVRLtz00z8Z0ombb",
+  STRIPE_PUBLISHABLE_KEY: "pk_live_51UJNuk6Fj8Emzg6I9ybBbxiR1Dpfh7JiNG5Qq2xVYztjtY8lUGuPdJzLXf3i0vSP3FogzoaNVffb4b3NTRBSx1DV0058Iak0bK",
 
   // Your Cloudflare Worker address. No trailing slash, nothing after .workers.dev
   WORKER_URL: "https://quit-muggin.eliannaf-ef.workers.dev",
