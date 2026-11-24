@@ -403,6 +403,12 @@
                                 <button onclick="openAppItem(27)" class="block w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">"Bye." Hoodie</button>
                                 </div>
                             </div>
+                            <div class="relative" onmouseenter="showAppSub('tshirt')">
+                                <button onclick="showAppSub('tshirt')" class="flex items-center justify-between w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">T-Shirt <i class="fa-solid fa-chevron-right text-[9px] ml-2"></i></button>
+                                <div id="app-sub-tshirt" class="app-sub hidden absolute left-full top-0 -mt-2 w-80 bg-brand-dark border border-zinc-700 rounded-xl shadow-2xl py-2 z-50">
+                                <button onclick="openAppItem(42)" class="block w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white transition">Grand Theft Dachshund T-Shirt</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <button onclick="goToCatalog('cards')" class="nav-btn relative px-4 py-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/60 transition">
@@ -498,6 +504,10 @@
                 <div id="mobile-app-sub-hoodies" class="hidden pl-3 space-y-1 border-l border-zinc-700 ml-3">
                     <button onclick="openAppItem(24); toggleMobileMenu();" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-400 hover:text-white">"And Stay Away" Hoodie</button>
                     <button onclick="openAppItem(27); toggleMobileMenu();" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-400 hover:text-white">"Bye." Hoodie</button>
+                </div>
+                <button onclick="toggleMobileAppSub('tshirt')" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-300 hover:text-white">T-Shirt <i class="fa-solid fa-chevron-down text-[9px] ml-1"></i></button>
+                <div id="mobile-app-sub-tshirt" class="hidden pl-3 space-y-1 border-l border-zinc-700 ml-3">
+                    <button onclick="openAppItem(42); toggleMobileMenu();" class="block w-full text-left px-3 py-1.5 text-sm text-zinc-400 hover:text-white">Grand Theft Dachshund T-Shirt</button>
                 </div>
             </div>
             <button onclick="goToCatalog('cards'); toggleMobileMenu();" class="relative block w-full text-left px-3 py-2 rounded-md text-base font-medium text-zinc-300 hover:bg-zinc-800">Cards <span class="new-star" style="top:-6px; right:8px;">NEW</span></button>
@@ -972,8 +982,8 @@
         const EMAILJS_TEMPLATE_STORE = String((window.QM_SETTINGS || {}).EMAILJS_TEMPLATE_STORE || "").trim();
         // --- STRIPE / WORKER SETTINGS: these live in site-settings.js (next to index.html), so you only fill them in once ---
         const QM_SETTINGS = window.QM_SETTINGS || {};
-        const STRIPE_PUBLISHABLE_KEY = String(QM_SETTINGS.STRIPE_PUBLISHABLE_KEY || "pk_live_51UJNuk6Fj8Emzg6I9ybBbxiR1Dpfh7JiNG5Qq2xVYztjtY8lUGuPdJzLXf3i0vSP3FogzoaNVffb4b3NTRBSx1DV0058Iak0bK").trim();
-        const WORKER_URL = String(QM_SETTINGS.WORKER_URL || "https://quit-muggin.eliannaf-ef.workers.dev").trim().replace(/\/+$/, "");
+        const STRIPE_PUBLISHABLE_KEY = String(QM_SETTINGS.STRIPE_PUBLISHABLE_KEY || "pk_test_REPLACE_ME").trim();
+        const WORKER_URL = String(QM_SETTINGS.WORKER_URL || "https://REPLACE-ME.workers.dev").trim().replace(/\/+$/, "");
         const workerReady = () => !WORKER_URL.includes('REPLACE');
         const FREE_SHIPPING_THRESHOLD = 50; // shipping is removed automatically once the subtotal reaches this
 
@@ -1011,6 +1021,18 @@
             { label: "3XL", price: 67.00, shipping: 8.79 },
             { label: "4XL", price: 67.00, shipping: 8.79 },
             { label: "5XL", price: 67.00, shipping: 8.79 }
+        ];
+        // "Grand Theft Dachshund" T-Shirt (price depends on size; $4.95 shipping for every size)
+        const GTD_TSHIRT_SIZES = [
+            { label: "XS", price: 20.75, shipping: 4.95 },
+            { label: "S", price: 20.75, shipping: 4.95 },
+            { label: "M", price: 20.75, shipping: 4.95 },
+            { label: "L", price: 20.75, shipping: 4.95 },
+            { label: "XL", price: 20.75, shipping: 4.95 },
+            { label: "2XL", price: 22.73, shipping: 4.95 },
+            { label: "3XL", price: 24.43, shipping: 4.95 },
+            { label: "4XL", price: 28.00, shipping: 4.95 },
+            { label: "5XL", price: 28.00, shipping: 4.95 }
         ];
         const SWEATER_SIZES = [
             { label: "S", price: 48.00, shipping: 8.79 },
@@ -1438,6 +1460,29 @@
                 images: {
                     thumbnail: IMG_PATH + "byetheme_main.jpg",
                     front: IMG_PATH + "byehoodie_whitefront.jpg"
+                }
+            },
+            {
+                id: 42,
+                title: `Grand Theft Dachshund T-Shirt`,
+                category: "apparel",
+                categoryLabel: "T-Shirt",
+                price: 20.75,
+                sizes: GTD_TSHIRT_SIZES,
+                priceFrom: true,
+                chooseSize: true,
+                badge: "New",
+                description: `Welcome to Leonida, where the crew has four legs and the getaway car is red. The front is a full Grand Theft Dachshund VI poster, and the back is a hand-illustrated map of the island. Unisex fit in sizes XS to 5XL, made to order, from the QUIT MUGGIN' apparel collection. A parody tribute, not affiliated with or endorsed by any video game publisher.`,
+                images: {
+                    thumbnail: IMG_PATH + "maingta.png",
+                    front: IMG_PATH + "frontgta.jpg",
+                    back: IMG_PATH + "backgta.jpg",
+                    context: IMG_PATH + "model1gta.jpg",
+                    context2: IMG_PATH + "model2gta.jpg",
+                    context3: IMG_PATH + "model3gta_front.jpg",
+                    context4: IMG_PATH + "model3gta_back.jpg",
+                    context5: IMG_PATH + "model4gta.png",
+                    context6: IMG_PATH + "foldedgta.jpg"
                 }
             },
             {
@@ -1870,6 +1915,9 @@
             if (imgs.context) views.push(['Context', imgs.context]);
             if (imgs.context2) views.push(['Context 2', imgs.context2]);
             if (imgs.context3) views.push(['Context 3', imgs.context3]);
+            if (imgs.context4) views.push(['Context 4', imgs.context4]);
+            if (imgs.context5) views.push(['Context 5', imgs.context5]);
+            if (imgs.context6) views.push(['Context 6', imgs.context6]);
 
             document.getElementById('modal-views').innerHTML = views.map(([label, src], i) => `
                 <button onclick="switchModalImage('${src}', this)" class="modal-thumb-btn px-3 py-1.5 text-[10px] font-mono rounded ${i === 0 ? 'bg-brand-accent text-white' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'}">${label}</button>
@@ -2286,7 +2334,7 @@
 
         // --- 10. THANKSGIVING WRAPPING PAPER PRE-SALE ---
         const PRESALE = {
-            dropAt: Date.UTC(2026, 10, 23, 1, 0, 0),   // THE ONLY LINE TO EDIT FOR A NEW DROP DATE. Date.UTC(year, month, day, hour, minute, second): month counts from 0 (Jan=0, Nov=10, Dec=11); time is UTC, so add 5 hours to Eastern time (EST) or 4 during daylight saving (EDT), and it can roll into the next day. Currently Sun Nov 22, 2026 8:00 PM EST = Nov 23 01:00 UTC.
+            dropAt: Date.UTC(2026, 10, 27, 1, 0, 0),   // THE ONLY LINE TO EDIT FOR A NEW DROP DATE. Date.UTC(year, month, day, hour, minute, second): month counts from 0 (Jan=0, Nov=10, Dec=11); time is UTC, so add 5 hours to Eastern time (EST) or 4 during daylight saving (EDT), and it can roll into the next day. Currently Thu Nov 26, 2026 8:00 PM EST = Nov 27 01:00 UTC.
             earlyMs: 2 * 60 * 60 * 1000,                // portal early access = 2 hours before the drop
             shipCents: 1349,                            // buyer shipping (same for every size)
             freeShipMin: 3,                             // papers needed for FREE shipping (the deal: buy 2, get the 3rd 50% off + free shipping)
